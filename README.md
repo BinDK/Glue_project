@@ -2,7 +2,8 @@
 Invetory/Sale + Manager EProject
               :warning: CHẠY JFRAME_Login.java trước
 
-Saleman:
+Saleman gồm
+
         sale: - [x] Xóa item ( theo dòng + xóa toàn bộ JTable)
               - [x] Thêm Customer( hoặc không theo customer)
               - [x] Chọn iTem 
