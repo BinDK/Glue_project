@@ -25,6 +25,7 @@ import entities.BillDetail;
 import entities.Customer;
 import entities.User;
 import entities.iTem;
+import model.BillModel;
 import model.CustomerModel;
 import model.ItemModel;
 
@@ -346,12 +347,14 @@ int cusPhone = Integer.parseInt(customerPhoneField.getText().toString());
 cus.setCustomer_phone(cusPhone);
 	if (model.createCustomer(cus)) {
 	JOptionPane.showConfirmDialog(null, "Just Add customer");
+	this.removeAll();
+	this.revalidate();
+	this.repaint();
 	}
 }
 
 	public void btnCreateBill_actionPerformed(ActionEvent e) {
 		Bill bill = new Bill();
-		List<BillDetail> detailBill = new ArrayList<BillDetail>();
 		Customer customer = (Customer) cuscbBox.getSelectedItem();
 		bill.setDate_print(new Date());
 		bill.setBill_status("APPROVED");
@@ -359,12 +362,14 @@ cus.setCustomer_phone(cusPhone);
 		bill.setTotal_price(Double.parseDouble(priceField.getText().toString()));
 		bill.setCustomer_id(customer.getCustomer_id());
 		bill.setEmp_id(Integer.parseInt(empIDText.getText()));
-
+BillModel dbBill = new BillModel();
+	int bill_id = dbBill.createBill(bill);
 			//Bill detail
 		int row = tableOrder.getRowCount();
 		BillDetail detail = new BillDetail();
 		DefaultTableModel table = (DefaultTableModel) tableOrder.getModel();
-	for(int i = row-1; i>=0 ;i--) {
+	
+		for(int i = row-1; i>=0 ;i--) {
 		int id;double price;String unit; int quantity; String temp; String temp1; String temp2;
 		temp = String.valueOf(tableOrder.getValueAt(i, 0));
 		id = Integer.parseInt(temp);
@@ -373,15 +378,17 @@ cus.setCustomer_phone(cusPhone);
 		unit = String.valueOf(tableOrder.getValueAt(i, 3));
 		temp2 = String.valueOf(tableOrder.getValueAt(i, 4));
 		quantity = Integer.parseInt(temp2);
-			System.out.println(id + " - " +price + " - " + unit + " - " +quantity);
+//			System.out.println(id + " - " +price + " - " + unit + " - " +quantity);
 			detail.setItem_id(id);
 			detail.setStore_price(price);
 			detail.setItem_unit(unit);
 			detail.setItem_quantity(quantity);
-			detailBill.add(detail);
+			dbBill.createBillDetail(detail, bill_id);
 		}
-System.out.println(detailBill);
-
+		JOptionPane.showConfirmDialog(null, "Đã thanh toán");
+		this.removeAll();
+		this.revalidate();
+		this.repaint();
 	}
 
 //String payment = cbPayment.getSelectedItem().toString();
