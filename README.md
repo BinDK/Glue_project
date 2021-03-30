@@ -3,12 +3,13 @@ Invetory/Sale + Manager EProject
               :warning: CHẠY JFRAME_Login.java trước
 
 Saleman gồm
-
-        sale: - [x] Xóa item ( theo dòng + xóa toàn bộ JTable)
+        sale - [x] Xóa item ( theo dòng + xóa toàn bộ JTable)
               - [x] Thêm Customer( hoặc không theo customer)
               - [x] Chọn iTem 
-                  - [ ]   chọn item theo ID
-              :heavy_check_mark: Tạo bill chính + bill_detail;
+              - [ ]   chọn item theo ID
+              - [x] Tạo bill chính + bill_detail;
+
+
 
          Bill gồm list bill + returned bill:  - [x] List all Bill
                                               - [ ] List bill returned HOẶC theo ngày
