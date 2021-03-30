@@ -129,9 +129,24 @@ public class BillModel {
 			return bills;
 	 }
 	 public boolean delete(int id) {
-			try {
+				 try {
 				PreparedStatement preparedStatement = ConnectDB.getConnection()
 						.prepareStatement("delete from db_bill where bill_id = ?");
+				preparedStatement.setInt(1, id);
+				return preparedStatement.executeUpdate() > 0;
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+				return false;
+			}
+		} 
+		 
+	 
+	 
+	 public boolean deleteAll(int id) {
+			try {
+				
+				PreparedStatement preparedStatement = ConnectDB.getConnection()
+						.prepareStatement("delete from db_bill_detail where bill_id = ?");
 				preparedStatement.setInt(1, id);
 				return preparedStatement.executeUpdate() > 0;
 			} catch (Exception e) {
