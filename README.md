@@ -8,7 +8,7 @@ Saleman gồm
               - [x] Thêm Customer( hoặc không theo customer)
               - [x] Chọn iTem 
                   - [ ]   chọn item theo ID
-              - [ ] Tạo bill chính + bill_detail;
+              :heavy_check_mark: Tạo bill chính + bill_detail;
 
          Bill gồm list bill + returned bill:  - [x] List all Bill
                                               - [ ] List bill returned HOẶC theo ngày
