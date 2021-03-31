@@ -363,12 +363,11 @@ cus.setCustomer_phone(cusPhone);
 		bill.setCustomer_id(customer.getCustomer_id());
 		bill.setEmp_id(Integer.parseInt(empIDText.getText()));
 BillModel dbBill = new BillModel();
+
 	int bill_id = dbBill.createBill(bill);
 			//Bill detail
 		int row = tableOrder.getRowCount();
 		BillDetail detail = new BillDetail();
-		DefaultTableModel table = (DefaultTableModel) tableOrder.getModel();
-	
 		for(int i = row-1; i>=0 ;i--) {
 		int id;double price;String unit; int quantity; String temp; String temp1; String temp2;
 		temp = String.valueOf(tableOrder.getValueAt(i, 0));
@@ -384,6 +383,7 @@ BillModel dbBill = new BillModel();
 			detail.setItem_unit(unit);
 			detail.setItem_quantity(quantity);
 			dbBill.createBillDetail(detail, bill_id);
+			dbBill.removeItemQuantity(quantity, id);
 		}
 		JOptionPane.showConfirmDialog(null, "Đã thanh toán");
 		this.removeAll();

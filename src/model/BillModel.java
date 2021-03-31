@@ -35,7 +35,28 @@ public class BillModel {
 		}
 		return bills;
 	}
-
+	public List<BillDetail> findAllBasedMainID(int bill_id) {
+		List<BillDetail> bills = new ArrayList<BillDetail>();
+		try {
+			PreparedStatement preparedStatement = ConnectDB.getConnection().prepareStatement("SELECT * FROM `db_bill_detail` WHERE `bill_id` = ?");
+			preparedStatement.setInt(1, bill_id);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				BillDetail bill = new BillDetail();
+				bill.setBill_detail_id(resultSet.getInt("bill_detail_id"));
+				bill.setItem_id(resultSet.getInt("item_id"));
+				bill.setStore_price(resultSet.getDouble("store_price"));
+				bill.setItem_unit(resultSet.getString("item_unit"));
+				bill.setItem_quantity(resultSet.getInt("item_quantity"));
+				bill.setBill_status(resultSet.getString("bill_status"));
+				bill.setBill_id(resultSet.getInt("bill_id"));
+				bills.add(bill);
+			}
+		} catch (Exception e) {
+			bills = null;
+		}
+		return bills;
+	}
 	public Integer createBill(Bill bill) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		try {
@@ -67,7 +88,7 @@ public class BillModel {
 
 		try {
 			PreparedStatement querry = ConnectDB.getConnection().prepareStatement(
-					"INSERT INTO `db_bill_detail` (`bill_detail_id`, `item_id`, `store_price`, `item_unit`, `item_quantity`, `bill_id`) VALUES (NULL, ?, ?, ?, ?, ?);");
+					"INSERT INTO `db_bill_detail` (`bill_detail_id`, `item_id`, `store_price`, `item_unit`, `item_quantity`, `bill_status`, `bill_id`) VALUES (NULL, ?, ?, ?,?, 'APPROVED', ?);");
 			querry.setInt(1, detailBill.getItem_id());
 			querry.setDouble(2, detailBill.getStore_price());
 			querry.setString(3, detailBill.getItem_unit());
@@ -79,6 +100,43 @@ public class BillModel {
 			System.err.println(e.getMessage());
 			return false;
 		}
+	}
+		 
+	public boolean removeItemQuantity(int qty, int id) {
+		 try {
+			 PreparedStatement preparedStatement = ConnectDB.getConnection()
+					 .prepareStatement("UPDATE `db_item` SET `store_quantity`=(`store_quantity` - ?) WHERE `item_id` = ?;");
+			 preparedStatement.setInt(1, qty);
+			 preparedStatement.setInt(2, id);
+			 return preparedStatement.executeUpdate() > 0;
+		 } catch (Exception e) {
+			 System.err.println(e.getMessage());
+			 return false;
+		 }
+	}
+	public boolean updateReturnedItemQuantity(int qty, int id) {
+		 try {
+			 PreparedStatement preparedStatement = ConnectDB.getConnection()
+					 .prepareStatement("UPDATE `db_item` SET `store_quantity`=(`store_quantity` + ?) WHERE `item_id` = ?;");
+			 preparedStatement.setInt(1, qty);
+			 preparedStatement.setInt(2, id);
+			 return preparedStatement.executeUpdate() > 0;
+		 } catch (Exception e) {
+			 System.err.println(e.getMessage());
+			 return false;
+		 }
+	}
+
+	public boolean updateStatusReturnedItem(int bill_detail_id) {
+		 try {
+			 PreparedStatement preparedStatement = ConnectDB.getConnection()
+					 .prepareStatement("UPDATE `db_bill_detail` SET `bill_status`='RETURNED', `item_quantity`= 0 WHERE `bill_detail_id` = ?;");
+			 preparedStatement.setInt(1, bill_detail_id);
+			 return preparedStatement.executeUpdate() > 0;
+		 } catch (Exception e) {
+			 System.err.println(e.getMessage());
+			 return false;
+		 }
 	}
 	public List<Bill> searchCURRENTdate() {
 		List<Bill> bills = new ArrayList<Bill>();
@@ -128,8 +186,9 @@ public class BillModel {
 			}
 			return bills;
 	 }
+	 
 	 public boolean delete(int id) {
-				 try {
+			try {
 				PreparedStatement preparedStatement = ConnectDB.getConnection()
 						.prepareStatement("delete from db_bill where bill_id = ?");
 				preparedStatement.setInt(1, id);
@@ -139,21 +198,5 @@ public class BillModel {
 				return false;
 			}
 		} 
-		 
-	 
-	 
-	 public boolean deleteAll(int id) {
-			try {
-				
-				PreparedStatement preparedStatement = ConnectDB.getConnection()
-						.prepareStatement("delete from db_bill_detail where bill_id = ?");
-				preparedStatement.setInt(1, id);
-				return preparedStatement.executeUpdate() > 0;
-			} catch (Exception e) {
-				System.err.println(e.getMessage());
-				return false;
-			}
-		} 
-	
 
 }
