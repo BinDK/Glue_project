@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 27, 2021 at 11:26 AM
+-- Generation Time: Mar 31, 2021 at 02:00 PM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 8.0.2
 
@@ -42,7 +42,22 @@ CREATE TABLE `db_bill` (
 --
 
 INSERT INTO `db_bill` (`bill_id`, `date_print`, `bill_status`, `payment`, `total_price`, `customer_id`, `emp_id`) VALUES
-(1, '2021-03-26', 'Approved', 'CASH', 17.23, 3, 4);
+(1, '2021-03-26', 'Approved', 'CASH', 17.23, 3, 4),
+(2, '2021-03-26', 'DENNY', 'CASH', 17.23, 3, 4),
+(3, '2021-03-26', 'Approved', 'CASH', 17.23, 3, 4),
+(5, '2021-03-27', 'APPROVED', 'VISA', 36.72, 3, 1),
+(6, '2021-03-27', 'APPROVED', 'MASTERCARD', 42.2, 3, 1),
+(8, '2021-03-30', 'APPROVED', 'CASH', 44.97, 1, 1),
+(9, '2021-03-30', 'APPROVED', 'CASH', 44.97, 1, 1),
+(10, '2021-03-30', 'APPROVED', 'CASH', 47.17, 1, 1),
+(11, '2021-03-30', 'APPROVED', 'CASH', 118.41, 1, 1),
+(12, '2021-03-30', 'APPROVED', 'CASH', 93.93, 1, 1),
+(13, '2021-03-30', 'APPROVED', 'CASH', 132.38, 1, 1),
+(14, '2021-03-30', 'APPROVED', 'CASH', 306, 5, 1),
+(15, '2021-03-30', 'APPROVED', 'CASH', 61.2, 7, 1),
+(16, '2021-03-30', 'APPROVED', 'CASH', 48.96, 8, 1),
+(17, '2021-03-30', 'APPROVED', 'CASH', 36.72, 1, 1),
+(18, '2021-03-31', 'APPROVED', 'MASTERCARD', 138.9, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -56,6 +71,7 @@ CREATE TABLE `db_bill_detail` (
   `store_price` double NOT NULL,
   `item_unit` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `item_quantity` int(11) NOT NULL,
+  `bill_status` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `bill_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -63,8 +79,25 @@ CREATE TABLE `db_bill_detail` (
 -- Dumping data for table `db_bill_detail`
 --
 
-INSERT INTO `db_bill_detail` (`bill_detail_id`, `item_id`, `store_price`, `item_unit`, `item_quantity`, `bill_id`) VALUES
-(1, 2, 4.99, 'pcs', 10, 1);
+INSERT INTO `db_bill_detail` (`bill_detail_id`, `item_id`, `store_price`, `item_unit`, `item_quantity`, `bill_status`, `bill_id`) VALUES
+(1, 2, 4.99, 'pcs', 10, 'APPROVED', 1),
+(6, 3, 4.99, 'pcs', 77, '', 3),
+(7, 1, 1.99, 'pcs', 14, '', 3),
+(11, 3, 14.99, 'pcs', 1, '', 8),
+(12, 3, 14.99, 'pcs', 1, '', 8),
+(13, 3, 14.99, 'pcs', 1, '', 8),
+(14, 3, 14.99, 'pcs', 1, '', 9),
+(15, 3, 14.99, 'pcs', 1, '', 9),
+(16, 3, 14.99, 'pcs', 0, 'RETURNED', 9),
+(17, 2, 4.99, 'pcs', 7, '', 10),
+(18, 1, 12.24, 'pcs', 1, '', 10),
+(19, 3, 14.99, 'pcs', 3, '', 11),
+(20, 1, 12.24, 'pcs', 6, '', 11),
+(21, 3, 14.99, 'pcs', 3, '', 12),
+(22, 1, 12.24, 'pcs', 4, '', 12),
+(23, 1, 12.24, 'pcs', 3, 'APPROVED', 17),
+(24, 3, 14.99, 'pcs', 6, 'APPROVED', 18),
+(25, 1, 12.24, 'pcs', 0, 'RETURNED', 18);
 
 -- --------------------------------------------------------
 
@@ -92,6 +125,7 @@ CREATE TABLE `db_bill_import_detail` (
   `item_price` double NOT NULL,
   `item_quantity` int(11) NOT NULL,
   `item_unit` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
+  `bill_status` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `bill_import_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -139,7 +173,12 @@ CREATE TABLE `db_customer` (
 INSERT INTO `db_customer` (`customer_id`, `customer_name`, `customer_phone`, `description`) VALUES
 (1, 'customer', 0, ''),
 (2, 'customer', 0, ''),
-(3, 'customer1', 123123, '');
+(3, 'customer1', 123123, ''),
+(4, 'POP', 9202393, ''),
+(5, 'POP2', 1912123, ''),
+(6, 'asdas', 12121, ''),
+(7, '1212', 34114, ''),
+(8, 'pop', 1212, '');
 
 -- --------------------------------------------------------
 
@@ -163,10 +202,9 @@ CREATE TABLE `db_item` (
 --
 
 INSERT INTO `db_item` (`item_id`, `item_name`, `item_store_price`, `item_import_price`, `store_quantity`, `item_unit`, `status`, `category_id`) VALUES
-(1, 'Fabric Mask', 12.24, 5, 100, 'pcs', 'FULL', 5),
-(2, 'Medical Mask', 4.99, 2, 100, 'pcs', 'FULL', 5),
-(3, '3D Mask', 14.99, 9.99, 100, 'pcs', 'FULL', 5),
-(7, 'oiuh', 1231.2, 10, 122, 'pcs', 'null', 5);
+(1, 'Fabric Mask', 12.24, 5, 53, 'pcs', 'FULL', 5),
+(2, 'Medical Mask', 4.99, 2, 88, 'pcs', 'FULL', 5),
+(3, '3D Mask', 14.99, 9.99, 95, 'pcs', 'FULL', 5);
 
 -- --------------------------------------------------------
 
@@ -292,13 +330,13 @@ ALTER TABLE `db_user`
 -- AUTO_INCREMENT for table `db_bill`
 --
 ALTER TABLE `db_bill`
-  MODIFY `bill_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `bill_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `db_bill_detail`
 --
 ALTER TABLE `db_bill_detail`
-  MODIFY `bill_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `bill_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `db_bill_import`
@@ -322,7 +360,7 @@ ALTER TABLE `db_category`
 -- AUTO_INCREMENT for table `db_customer`
 --
 ALTER TABLE `db_customer`
-  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `db_item`
