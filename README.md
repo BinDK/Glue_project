@@ -7,7 +7,7 @@ Saleman gồm <br />
               :heavy_check_mark: Thêm Customer( hoặc không theo customer) <br />
               :heavy_check_mark: Chọn iTem  <br />
               :heavy_check_mark: Tạo bill chính + bill_detail; <br />
-              :x:   chọn item theo ID <br />
+              ✔️   chọn item theo ID <br />
               :heavy_check_mark: Khi tạo bill đã TRỪ trong KHO(db_item) <br />
               
    Bill gồm list bill + returned bill  <br />
