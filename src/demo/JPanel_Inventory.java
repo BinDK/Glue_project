@@ -14,6 +14,7 @@ import model.ItemModel;
 
 import javax.swing.JButton;
 import java.awt.Color;
+import javax.swing.BoxLayout;
 
 public class JPanel_Inventory extends JPanel {
 	private JTable tableItem;
@@ -28,6 +29,7 @@ public class JPanel_Inventory extends JPanel {
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(9, 51, 41));
 		add(panel, BorderLayout.EAST);
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
 		btnListShortageItem = new JButton("List Shortage iTem");
 		panel.add(btnListShortageItem);

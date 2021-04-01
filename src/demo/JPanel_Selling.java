@@ -22,12 +22,15 @@ import com.toedter.calendar.JDateChooser;
 
 import entities.Bill;
 import entities.BillDetail;
+import entities.Category;
 import entities.Customer;
 import entities.User;
 import entities.iTem;
 import model.BillModel;
 import model.CustomerModel;
 import model.ItemModel;
+import model.JTest.RenderCaTecbox;
+import model.JTest.RenderiTEMcbox;
 
 import javax.swing.JComboBox;
 import javax.swing.JButton;
@@ -52,7 +55,6 @@ public class JPanel_Selling extends JPanel {
 	private JComboBox cbPayment;
 	private JButton btnCreateBill;
 	private JComboBox cbiTem;
-	private JDateChooser JdateChooser;
 	private JPanel buttonPannel;
 	private JButton btnAddcustomer;
 	private JPanel panel_2;
@@ -66,6 +68,8 @@ public class JPanel_Selling extends JPanel {
 	private JLabel empIDText;
 	private Map<String, Object> values = new HashMap<String, Object>();
 	private JLabel lblEmployeeId;
+	private JLabel lblCate;
+	private JComboBox cbCate;
 
 	/**
 	 * Create the panel.
@@ -168,15 +172,22 @@ public class JPanel_Selling extends JPanel {
 		fl_panel_2.setAlignment(FlowLayout.LEFT);
 		panel.add(panel_2, BorderLayout.SOUTH);
 		
-		JLabel lblItem = new JLabel("iTem");
+		lblCate = new JLabel("Category");
+		panel_2.add(lblCate);
+		
+		cbCate = new JComboBox();
+		cbCate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cbCate_actionPerformed(e);
+			}
+		});
+		cbCate.setMaximumSize(new Dimension(10, 3));
+		panel_2.add(cbCate);
+		
+		JLabel lblItem = new JLabel("Item");
 		panel_2.add(lblItem);
 		
 		cbiTem = new JComboBox();
-		cbiTem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				cbiTem_actionPerformed(e);
-			}
-		});
 		cbiTem.setMaximumSize(new Dimension(10, 3));
 		panel_2.add(cbiTem);
 		
@@ -205,12 +216,6 @@ public class JPanel_Selling extends JPanel {
 		panel_2.add(qtyField);
 		qtyField.setColumns(10);
 		panel_2.add(btnAddOrder);
-		
-		JLabel lblDate = new JLabel("Date");
-		panel_2.add(lblDate);
-		
-		JdateChooser = new JDateChooser();
-		panel_2.add(JdateChooser);
 		
 		lblLable = new JLabel("Total price");
 		panel_2.add(lblLable);
@@ -252,14 +257,21 @@ public JPanel_Selling(	Map<String, Object> values ) {
 		table.addColumn("Tong tien");
 		tableOrder.setModel(table);
 		
+//		ItemModel itemModel = new ItemModel();
+//		DefaultComboBoxModel<iTem> iTemcbox = new DefaultComboBoxModel<iTem>();
+//		for (iTem item : itemModel.findAll()) {
+//			iTemcbox.addElement(item);
+//		}
+//		cbiTem.setModel(iTemcbox);
+//		cbiTem.setRenderer(new RenderiTEMcbox());
+//		
 		ItemModel itemModel = new ItemModel();
-		DefaultComboBoxModel<iTem> iTemcbox = new DefaultComboBoxModel<iTem>();
-		for (iTem item : itemModel.findAll()) {
-			iTemcbox.addElement(item);
+		DefaultComboBoxModel<Category> Catecbox = new DefaultComboBoxModel<Category>();
+		for (Category cate : itemModel.findAllCate()) {
+			Catecbox.addElement(cate);
 		}
-		cbiTem.setModel(iTemcbox);
-		cbiTem.setRenderer(new RenderiTEMcbox());
-		
+		cbCate.setModel(Catecbox);
+		cbCate.setRenderer(new RenderCaTecbox());
 		// Combobox Customer
 		DefaultComboBoxModel<Customer> CustomBox = new DefaultComboBoxModel<Customer>();
 		CustomerModel customModel = new CustomerModel();
@@ -283,7 +295,6 @@ public JPanel_Selling(	Map<String, Object> values ) {
 		
 	}
 	public class RenderiTEMcbox extends DefaultListCellRenderer{
-
 		@Override
 		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
 				boolean cellHasFocus) {
@@ -291,48 +302,72 @@ public JPanel_Selling(	Map<String, Object> values ) {
 			value = item.getItem_name();
 			return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 		}
-		
 	}
-	
+	public class RenderCaTecbox extends DefaultListCellRenderer {
+		@Override
+		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+				boolean cellHasFocus) {
+			Category cate = (Category) value;
+			value = cate.getCate_name();
+			return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+		}		
+	}
 
-	public void cbiTem_actionPerformed(ActionEvent e) {
+	public void cbCate_actionPerformed(ActionEvent e) {
 //	int id = cbiTem.getSelectedIndex() + 1;
 //	ItemModel model = new ItemModel();
 //	DefaultTableModel table = new DefaultTableModel();
-	
-	}
-	public void btnAddOrder_actionPerformed(ActionEvent e) {
+		try {
+			ItemModel itemModel = new ItemModel();
+			DefaultComboBoxModel iTemcbox = (DefaultComboBoxModel) cbiTem.getModel();
+					Category cateID = (Category) cbCate.getSelectedItem();
 
-	DefaultTableModel table = (DefaultTableModel) tableOrder.getModel();
-	iTem itemName = (iTem) cbiTem.getSelectedItem();
-if (qtyField.getText().isEmpty()) {
-	JOptionPane.showMessageDialog(null, "Quên số lượng");
-} else {
-	int quantity = Integer.parseInt(qtyField.getText());
-	table.addRow(new Object[] {
-			itemName.getItem_id(),itemName.getItem_name(),itemName.getItem_store_price(),itemName.getItem_unit(), quantity, itemName.getItem_store_price() * quantity
-	});	
-	qtyField.setText("1");
-}	
-}
+			for (iTem item : itemModel.findiTemOnCateID(cateID.getId())) {	
+				
+				iTemcbox.addElement(item);
+			}
+			cbiTem.setModel(iTemcbox);
+			cbiTem.setRenderer(new RenderiTEMcbox());
+		} catch (Exception e2) {
+			// TODO: handle exception
+			System.err.println(e2.getMessage());
+		}
+	}
+
+	public void btnAddOrder_actionPerformed(ActionEvent e) {
+		DefaultTableModel table = (DefaultTableModel) tableOrder.getModel();
+		iTem itemName = (iTem) cbiTem.getSelectedItem();
+		if (qtyField.getText().isEmpty() || itemName == null) {
+			JOptionPane.showMessageDialog(null, "Quên số lượng hơặc chưa chọn Item!!");
+		} else {
+			int quantity = Integer.parseInt(qtyField.getText());
+			table.addRow(new Object[] { itemName.getItem_id(), itemName.getItem_name(), itemName.getItem_store_price(),
+					itemName.getItem_unit(), quantity, itemName.getItem_store_price() * quantity });
+			qtyField.setText("1");
+		}
+	}
 	public void btnClearOrder_actionPerformed(ActionEvent e) {
 		DefaultTableModel table = (DefaultTableModel) tableOrder.getModel();
 		table.setRowCount(0);
 	}
 	public void deleteRow_actionPerformed(ActionEvent e) {		
 		int[] tableRow = tableOrder.getSelectedRows();
-		if (tableRow.length > 0 ) {
-			DefaultTableModel table = (DefaultTableModel) tableOrder.getModel();
-			for (int i = tableRow.length -1; i >= 0; i--) {
-				table.removeRow(tableRow[i]);
+//		if (tableRow.length <  0) {
+//			System.out.println(tableRow.length);
+//		} else {
+			if (tableRow.length > 0 ) {
+				DefaultTableModel table = (DefaultTableModel) tableOrder.getModel();
+				for (int i = tableRow.length -1; i >= 0; i--) {
+					table.removeRow(tableRow[i]);
+				}
 			}
-		}
+//		}
 	}
 	public void btnPrice_actionPerformed(ActionEvent e) {
-		int[] tableRow = tableOrder.getSelectedRows();
+		int tableRow = tableOrder.getRowCount();
 		DefaultTableModel table = (DefaultTableModel) tableOrder.getModel();
 		double convert = 0;
-		for (int i = tableRow.length -1; i>=0 ;i--) {
+		for (int i = tableRow -1 ; i>=0 ;i--) {
 			double price = (double) table.getValueAt(i, 5);
 			convert += price;
 		}
