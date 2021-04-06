@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 31, 2021 at 02:00 PM
+-- Generation Time: Apr 06, 2021 at 02:16 PM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 8.0.2
 
@@ -57,7 +57,15 @@ INSERT INTO `db_bill` (`bill_id`, `date_print`, `bill_status`, `payment`, `total
 (15, '2021-03-30', 'APPROVED', 'CASH', 61.2, 7, 1),
 (16, '2021-03-30', 'APPROVED', 'CASH', 48.96, 8, 1),
 (17, '2021-03-30', 'APPROVED', 'CASH', 36.72, 1, 1),
-(18, '2021-03-31', 'APPROVED', 'MASTERCARD', 138.9, 1, 1);
+(18, '2021-03-31', 'APPROVED', 'MASTERCARD', 138.9, 1, 1),
+(19, '2021-04-01', 'APPROVED', 'MASTERCARD', 108.92, 5, 1),
+(20, '2021-04-02', 'APPROVED', 'CASH', 12.24, 1, 1),
+(21, '2021-04-03', 'APPROVED', 'MASTERCARD', 516.4, 4, 1),
+(22, '2021-04-06', 'APPROVED', 'MASTERCARD', 74.85000000000001, 4, 4),
+(23, '2021-04-06', 'APPROVED', 'VISA', 791.72, 5, 4),
+(24, '2021-04-06', 'APPROVED', 'CASH', 94.91, 4, 4),
+(25, '2021-04-06', 'APPROVED', 'MASTERCARD', 74.93, 5, 4),
+(26, '2021-04-06', 'APPROVED', 'MASTERCARD', 74.93, 5, 4);
 
 -- --------------------------------------------------------
 
@@ -97,7 +105,16 @@ INSERT INTO `db_bill_detail` (`bill_detail_id`, `item_id`, `store_price`, `item_
 (22, 1, 12.24, 'pcs', 4, '', 12),
 (23, 1, 12.24, 'pcs', 3, 'APPROVED', 17),
 (24, 3, 14.99, 'pcs', 6, 'APPROVED', 18),
-(25, 1, 12.24, 'pcs', 0, 'RETURNED', 18);
+(25, 1, 12.24, 'pcs', 0, 'RETURNED', 18),
+(26, 3, 14.99, 'pcs', 4, 'APPROVED', 19),
+(27, 1, 12.24, 'pcs', 0, 'RETURNED', 19),
+(28, 1, 12.24, 'pcs', 1, 'APPROVED', 20),
+(29, 3, 14.99, 'pcs', 32, 'APPROVED', 21),
+(30, 1, 12.24, 'pcs', 0, 'RETURNED', 21),
+(31, 8, 4.99, 'bottle', 3, 'APPROVED', 22),
+(32, 2, 4.99, 'pcs', 0, 'RETURNED', 22),
+(33, 3, 14.99, 'pcs', 52, 'APPROVED', 23),
+(34, 1, 12.24, 'pcs', 1, 'APPROVED', 23);
 
 -- --------------------------------------------------------
 
@@ -122,7 +139,8 @@ CREATE TABLE `db_bill_import` (
 CREATE TABLE `db_bill_import_detail` (
   `import_detail_id` int(11) NOT NULL,
   `item_name` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
-  `item_price` double NOT NULL,
+  `import_price` double NOT NULL,
+  `store_price` double NOT NULL,
   `item_quantity` int(11) NOT NULL,
   `item_unit` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `bill_status` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
@@ -202,9 +220,10 @@ CREATE TABLE `db_item` (
 --
 
 INSERT INTO `db_item` (`item_id`, `item_name`, `item_store_price`, `item_import_price`, `store_quantity`, `item_unit`, `status`, `category_id`) VALUES
-(1, 'Fabric Mask', 12.24, 5, 53, 'pcs', 'FULL', 5),
-(2, 'Medical Mask', 4.99, 2, 88, 'pcs', 'FULL', 5),
-(3, '3D Mask', 14.99, 9.99, 95, 'pcs', 'FULL', 5);
+(1, 'Fabric Mask', 12.24, 5, 100, 'pcs', 'FULL', 5),
+(2, 'Medical Mask', 4.99, 2, 100, 'pcs', 'FULL', 5),
+(3, '3D Mask', 14.99, 9.99, 100, 'pcs', 'FULL', 5),
+(8, 'Dalat Milk Mild', 4.99, 5.99, 100, 'bottle', 'FULL', 3);
 
 -- --------------------------------------------------------
 
@@ -248,10 +267,11 @@ CREATE TABLE `db_user` (
 --
 
 INSERT INTO `db_user` (`id`, `username`, `password`, `emp_name`, `emp_role`) VALUES
-(1, 'admin', 'admin', 'Administrator', 'ADMIN'),
-(2, 'sm', 'sm123', 'Sale Manager', 'SM'),
-(3, 'im123', 'im123', 'Inventory Manager', 'IM'),
-(4, 'sale123', 'sale123', 'Saleman', 'sale');
+(1, 'admin', '$2a$10$T3F5sxE3NzA5Aj4Kixsml.3dFQMddcvPViP/3YYAh28rzQ6LnGQXG', 'Administrator', 'ADMIN'),
+(2, 'sm', '$2a$10$1n2ZQHMq3EehpND3EMuyk.rOfNJQK6IqITY8UAQ9A6dmcmhYuQWyy', 'Sale Manager', 'SM'),
+(3, 'im123', '$2a$10$KNTsQLUdTHPy.kxIBmXLweF6w0YwBGguOKdPd9odY6ogKu.bUH0qa', 'Inventory Manager', 'IM'),
+(4, 'sale123', '$2a$10$JDv/DiW.rbLpmqh7edflSe7diHRVrDLAnS/AF8fJZNb7sKffzF1Aa', 'Saleman', 'sale'),
+(5, 'test', '$2a$10$j5BaUtw/7YsEj8/cGXoYf.PJOtjvYRSsQB226Fqc6Tyb.hRaY5UJ2', 'test', 'SALE');
 
 --
 -- Indexes for dumped tables
@@ -330,13 +350,13 @@ ALTER TABLE `db_user`
 -- AUTO_INCREMENT for table `db_bill`
 --
 ALTER TABLE `db_bill`
-  MODIFY `bill_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `bill_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `db_bill_detail`
 --
 ALTER TABLE `db_bill_detail`
-  MODIFY `bill_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `bill_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `db_bill_import`
@@ -366,7 +386,7 @@ ALTER TABLE `db_customer`
 -- AUTO_INCREMENT for table `db_item`
 --
 ALTER TABLE `db_item`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `db_supplier`
@@ -378,7 +398,7 @@ ALTER TABLE `db_supplier`
 -- AUTO_INCREMENT for table `db_user`
 --
 ALTER TABLE `db_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables
