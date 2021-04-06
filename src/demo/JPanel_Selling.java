@@ -40,6 +40,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -240,9 +242,8 @@ public class JPanel_Selling extends JPanel {
 		});
 		popUp.add(deleteRow);
 		tableOrder.setComponentPopupMenu(popUp);
-//		loadData();
 	}
-public JPanel_Selling(	Map<String, Object> values ) {
+public JPanel_Selling(Map<String, Object> values) {
 	this();
 	this.values = values;
 	loadData();
@@ -280,6 +281,7 @@ public JPanel_Selling(	Map<String, Object> values ) {
 		}
 		cuscbBox.setModel(CustomBox);
 		cuscbBox.setRenderer(new RenderCustomerBox());
+		
 		User user = (User) values.get("account");
 		empIDText.setText(String.valueOf(user.getId()));		
 }
@@ -321,9 +323,8 @@ public JPanel_Selling(	Map<String, Object> values ) {
 			ItemModel itemModel = new ItemModel();
 			DefaultComboBoxModel iTemcbox = (DefaultComboBoxModel) cbiTem.getModel();
 					Category cateID = (Category) cbCate.getSelectedItem();
-
-			for (iTem item : itemModel.findiTemOnCateID(cateID.getId())) {	
-				
+					cbiTem.removeAllItems();
+					for (iTem item : itemModel.findiTemOnCateID(cateID.getId())) {	
 				iTemcbox.addElement(item);
 			}
 			cbiTem.setModel(iTemcbox);
@@ -337,14 +338,26 @@ public JPanel_Selling(	Map<String, Object> values ) {
 	public void btnAddOrder_actionPerformed(ActionEvent e) {
 		DefaultTableModel table = (DefaultTableModel) tableOrder.getModel();
 		iTem itemName = (iTem) cbiTem.getSelectedItem();
-		if (qtyField.getText().isEmpty() || itemName == null) {
+		if (qtyField.getText().isEmpty() || cbiTem.getSelectedItem() == null ) {
 			JOptionPane.showMessageDialog(null, "Quên số lượng hơặc chưa chọn Item!!");
-		} else {
+		} 
+//		else if (itemModel.itemQty(idd) < itemName.getStore_quantity()) {
+//			JOptionPane.showMessageDialog(null, "Qúa số lượng trong kho!! Số trong kho còn lại: " + itemModel.itemQty(idd));
+//		} 
+		else {
+			ItemModel itemModel = new ItemModel();
+			int idd = itemName.getItem_id();
+			System.out.println(idd);
+			int qtyy = itemModel.itemQty(idd);
+			 if (qtyy < Integer.parseInt(qtyField.getText())) {
+					JOptionPane.showMessageDialog(null, "Qúa số lượng trong kho!! Số trong kho còn lại: " + itemModel.itemQty(idd));
+				} else {
 			int quantity = Integer.parseInt(qtyField.getText());
 			table.addRow(new Object[] { itemName.getItem_id(), itemName.getItem_name(), itemName.getItem_store_price(),
 					itemName.getItem_unit(), quantity, itemName.getItem_store_price() * quantity });
 			qtyField.setText("1");
-		}
+				}
+				}
 	}
 	public void btnClearOrder_actionPerformed(ActionEvent e) {
 		DefaultTableModel table = (DefaultTableModel) tableOrder.getModel();
@@ -389,21 +402,31 @@ cus.setCustomer_phone(cusPhone);
 }
 
 	public void btnCreateBill_actionPerformed(ActionEvent e) {
-		Bill bill = new Bill();
-		Customer customer = (Customer) cuscbBox.getSelectedItem();
-		bill.setDate_print(new Date());
-		bill.setBill_status("APPROVED");
-		bill.setPayment(String.valueOf(cbPayment.getSelectedItem().toString().trim()));
-		bill.setTotal_price(Double.parseDouble(priceField.getText().toString()));
-		bill.setCustomer_id(customer.getCustomer_id());
-		bill.setEmp_id(Integer.parseInt(empIDText.getText()));
-BillModel dbBill = new BillModel();
-
+try {
+	Bill bill = new Bill();
+	Customer customer = (Customer) cuscbBox.getSelectedItem();
+	bill.setDate_print(new Date());
+	bill.setBill_status("APPROVED");
+	bill.setPayment(String.valueOf(cbPayment.getSelectedItem().toString().trim()));
+	bill.setTotal_price(Double.parseDouble(priceField.getText().toString()));
+	bill.setCustomer_id(customer.getCustomer_id());
+	bill.setEmp_id(Integer.parseInt(empIDText.getText()));
+	BillModel dbBill = new BillModel();
 	int bill_id = dbBill.createBill(bill);
-			//Bill detail
-		int row = tableOrder.getRowCount();
-		BillDetail detail = new BillDetail();
-		for(int i = row-1; i>=0 ;i--) {
+    SimpleDateFormat time = new SimpleDateFormat("ddMMyyyy-HHmmss");
+    String fileName = time.format(new Date());
+    FileOutputStream streamTo = new FileOutputStream("src//billPrint//Bill-"+fileName+".txt", true);
+    String save = "";
+    save += "ID Bill: " + bill_id + " - Date: " + time.format(new Date()) + "\n\r";
+    save += "Payment: " + cbPayment.getSelectedItem().toString().trim() + "Customer: " + customer.getCustomer_id() + "\n\r";
+    save += "Employee ID: " + Integer.parseInt(empIDText.getText());
+
+		//Bill detail
+	int row = tableOrder.getRowCount();
+	BillDetail detail = new BillDetail();
+	ItemModel model = new ItemModel();
+//	System.out.println(model.itemQty());
+	for(int i = row-1; i>=0 ;i--) {
 		int id;double price;String unit; int quantity; String temp; String temp1; String temp2;
 		temp = String.valueOf(tableOrder.getValueAt(i, 0));
 		id = Integer.parseInt(temp);
@@ -412,20 +435,31 @@ BillModel dbBill = new BillModel();
 		unit = String.valueOf(tableOrder.getValueAt(i, 3));
 		temp2 = String.valueOf(tableOrder.getValueAt(i, 4));
 		quantity = Integer.parseInt(temp2);
+	
+		detail.setItem_id(id);
+		detail.setStore_price(price);
+		detail.setItem_unit(unit);
+		detail.setItem_quantity(quantity);
+			save += "\n\r" + "Item: " + id + " - Quantity: " + quantity + "Price: " + price;
+					dbBill.createBillDetail(detail, bill_id);
+					dbBill.removeItemQuantity(quantity, id);				
 //			System.out.println(id + " - " +price + " - " + unit + " - " +quantity);
-			detail.setItem_id(id);
-			detail.setStore_price(price);
-			detail.setItem_unit(unit);
-			detail.setItem_quantity(quantity);
-			dbBill.createBillDetail(detail, bill_id);
-			dbBill.removeItemQuantity(quantity, id);
-		}
-		JOptionPane.showConfirmDialog(null, "Đã thanh toán");
-		this.removeAll();
-		this.revalidate();
-		this.repaint();
-	}
 
+	this.removeAll();
+	this.revalidate();
+	this.repaint();
+}
+    save += "\n\r" +"Total: " + Double.parseDouble(priceField.getText().toString());
+
+    streamTo.write(save.getBytes());
+    streamTo.flush();
+    streamTo.close();
+	JOptionPane.showConfirmDialog(null, "Đã thanh toán");
+} catch (Exception e2) {
+	// TODO: handle exception
+	System.out.println(e2.getMessage());
+}
+	}
 //String payment = cbPayment.getSelectedItem().toString();
 //	int row[] = tableOrder.getSelectedRows();
 //int column = tableOrder.getColumnCount();

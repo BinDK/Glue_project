@@ -37,6 +37,9 @@ public class JFrame_Main extends JFrame {
 
 	private Map<String, Object> values = new HashMap<String, Object>();
 	private JMenuItem mntmCheckInventory;
+	private JButton btnInventory;
+	private JButton btnAddUser;
+	private JButton btAdditemcate;
 
 	/**
 	 * Launch the application.
@@ -64,7 +67,7 @@ public class JFrame_Main extends JFrame {
 	 */
 	public JFrame_Main() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 847, 454);
+		setBounds(100, 100, 1015, 530);
 
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -100,6 +103,20 @@ public class JFrame_Main extends JFrame {
 				btnSelling_actionPerformed(e);
 			}
 		});
+		
+		JButton btnProfile = new JButton("My Profile");
+		btnProfile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnProfile_actionPerformed(e);
+			}
+		});
+		btnProfile.setIcon(new ImageIcon(JFrame_Main.class.getResource("/resources/Profile.png")));
+		btnProfile.setForeground(Color.WHITE);
+		btnProfile.setFont(new Font("Liberation Sans", Font.BOLD, 13));
+		btnProfile.setFocusPainted(false);
+		btnProfile.setContentAreaFilled(false);
+		btnProfile.setBorderPainted(false);
+		JPanelLEFT.add(btnProfile);
 		btnSelling.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnSelling.setContentAreaFilled(false);
 		btnSelling.setBorderPainted(false);
@@ -121,7 +138,7 @@ public class JFrame_Main extends JFrame {
 		btnBIll.setBorderPainted(false);
 		JPanelLEFT.add(btnBIll);
 
-		JButton btnInventory = new JButton("Inventory");
+		btnInventory = new JButton("Inventory");
 		btnInventory.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnInventory_actionPerformed(e);
@@ -135,6 +152,34 @@ public class JFrame_Main extends JFrame {
 		btnInventory.setContentAreaFilled(false);
 		btnInventory.setBorderPainted(false);
 		JPanelLEFT.add(btnInventory);
+		
+		btnAddUser = new JButton("Add User");
+		btnAddUser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnAddUser_actionPerformed(e);
+			}
+		});
+		btnAddUser.setIcon(new ImageIcon(JFrame_Main.class.getResource("/resources/Profile.png")));
+		btnAddUser.setForeground(Color.WHITE);
+		btnAddUser.setFont(new Font("Liberation Sans", Font.BOLD, 13));
+		btnAddUser.setFocusPainted(false);
+		btnAddUser.setContentAreaFilled(false);
+		btnAddUser.setBorderPainted(false);
+		JPanelLEFT.add(btnAddUser);
+		
+		btAdditemcate = new JButton("Add Item / CateGory");
+		btAdditemcate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btAdditemcate_actionPerformed(e);
+			}
+		});
+		btAdditemcate.setIcon(new ImageIcon(JFrame_Main.class.getResource("/resources/Save.png")));
+		btAdditemcate.setForeground(Color.WHITE);
+		btAdditemcate.setFont(new Font("Liberation Sans", Font.BOLD, 13));
+		btAdditemcate.setFocusPainted(false);
+		btAdditemcate.setContentAreaFilled(false);
+		btAdditemcate.setBorderPainted(false);
+		JPanelLEFT.add(btAdditemcate);
 
 		JPanel JPanelBase = new JPanel();
 		contentPane.add(JPanelBase, BorderLayout.SOUTH);
@@ -165,23 +210,39 @@ public class JFrame_Main extends JFrame {
 		if (user.getEmp_role().equalsIgnoreCase("sale")) {
 //			mnWelcome.setVisible(false);
 			mntmCheckInventory.setEnabled(false);
-		}
+		} 
+		else if (user.getEmp_role().equalsIgnoreCase("IM")) {
+//			mnWelcome.setVisible(false);
+			btnInventory.setVisible(false);
+		} 
 	}
-
+	public void btnProfile_actionPerformed(ActionEvent e) {
+		clearJPanel();
+		User user = (User) values.get("account");
+		Map<String, Object> values = new HashMap<String, Object>();
+		values.put("account", user);
+		JPanel_Profile profile = new JPanel_Profile(values);
+		JPanelCenter.add(profile);
+		profile.setVisible(true);
+		
+	}
 	public void btnSelling_actionPerformed(ActionEvent e) {
 		clearJPanel();
 		User user = (User) values.get("account");
-//	int idUser = user.getId();
 		Map<String, Object> values = new HashMap<String, Object>();
 		values.put("account", user);
+		
 		JPanel_Selling selling = new JPanel_Selling(values);
-
 		JPanelCenter.add(selling);
 		selling.setVisible(true);
 	}
 
 	public void btnBIll_actionPerformed(ActionEvent e) {
 		clearJPanel();
+		User user = (User) values.get("account");
+		Map<String, Object> values = new HashMap<String, Object>();
+		values.put("account", user);
+		
 		JPanel_Bill bill = new JPanel_Bill();
 		JPanelCenter.add(bill);
 		bill.setVisible(true);
@@ -189,8 +250,27 @@ public class JFrame_Main extends JFrame {
 
 	public void btnInventory_actionPerformed(ActionEvent e) {
 	clearJPanel();
+	User user = (User) values.get("account");
+	Map<String, Object> values = new HashMap<String, Object>();
+	values.put("account", user);
 	JPanel_Inventory item = new JPanel_Inventory();
 	JPanelCenter.add(item); item.setVisible(true);
+	}
+	public void btnAddUser_actionPerformed(ActionEvent e) {
+		clearJPanel();
+//		User user = (User) values.get("account");
+//		Map<String, Object> values = new HashMap<String, Object>();
+//		values.put("account", user);
+		JPanel_Admin_User adminU = new JPanel_Admin_User();
+		JPanelCenter.add(adminU); adminU.setVisible(true);
+	}
+	public void btAdditemcate_actionPerformed(ActionEvent e) {
+		clearJPanel();
+//		User user = (User) values.get("account");
+//		Map<String, Object> values = new HashMap<String, Object>();
+//		values.put("account", user);		
+		JPanel_AddItemCate addItemCate = new JPanel_AddItemCate();
+		JPanelCenter.add(addItemCate);addItemCate.setVisible(true);
 	}
 
 	private void clearJPanel() {

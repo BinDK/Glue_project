@@ -1,0 +1,1 @@
+ID Bill: 22Date: 06042021-152909Payment: MASTERCARDCustomer: 4Employee ID: 4Item: 8 - Quantity: 3Price: 4.99Item: 2 - Quantity: 12Price: 4.99Total: 74.85000000000001

@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 
-import model.LoginModel;
+import model.UserModel;
 import entities.User;
 import javax.swing.UIManager;
 import javax.swing.JLabel;
@@ -92,16 +92,16 @@ public class JFrame_Login extends JFrame {
 		contentPane.add(passwordField);
 	}
 	public void btnLogin_actionPerformed(ActionEvent e) {
-		LoginModel model = new LoginModel();
+		UserModel userModel = new UserModel();
 		String username = uNameField.getText();
 		String password = new String(passwordField.getPassword());
-		User user= model.login(username,  password);
-		if(user == null) JOptionPane.showMessageDialog(null, "Invalid");
+		User user= userModel.login(username,  password);
+		if(userModel.login(username,  password) == null) JOptionPane.showMessageDialog(null, "Invalid");
 		else {
 			Map<String, Object> values = new HashMap<String, Object>();
 			values.put("account", user);
 			JFrame_Main jframe_main = new JFrame_Main(values);
-			jframe_main.setTitle("Welcome user: " + username + "Your role is: " + user.getEmp_role());
+			jframe_main.setTitle("Welcome user: " + username + " Your role is: " + user.getEmp_role());
 			jframe_main.setVisible(true);
 			this.setVisible(false);
 		}

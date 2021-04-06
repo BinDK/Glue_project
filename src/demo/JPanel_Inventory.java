@@ -15,6 +15,8 @@ import model.ItemModel;
 import javax.swing.JButton;
 import java.awt.Color;
 import javax.swing.BoxLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class JPanel_Inventory extends JPanel {
 	private JTable tableItem;
@@ -32,6 +34,11 @@ public class JPanel_Inventory extends JPanel {
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
 		btnListShortageItem = new JButton("List Shortage iTem");
+		btnListShortageItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnListShortageItem_actionPerformed(e);
+			}
+		});
 		panel.add(btnListShortageItem);
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -63,5 +70,9 @@ public class JPanel_Inventory extends JPanel {
 					});
 		}
 		tableItem.setModel(table);
+	}
+	public void btnListShortageItem_actionPerformed(ActionEvent e) {
+		ItemModel model = new ItemModel();
+		System.out.println(model.itemQty(2));
 	}
 }

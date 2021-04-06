@@ -1,0 +1,5 @@
+ID Bill: 23 - Date: 06042021-153247
+Payment: VISACustomer: 5
+Employee ID: 4
+Item: 3 - Quantity: 52Price: 14.99
+Item: 1 - Quantity: 1Price: 12.24Total: 791.72
