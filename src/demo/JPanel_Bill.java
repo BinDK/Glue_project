@@ -111,13 +111,13 @@ public class JPanel_Bill extends JPanel {
 		lblNewLabel = new JLabel("Total money(so far): ");
 		panel_3.add(lblNewLabel);
 		
-		lblTotal = new JLabel("");
+		lblTotal = new JLabel("0");
 		panel_3.add(lblTotal);
 		
 		lblItemReturnedsoFar = new JLabel("iTem returned(so far): ");
 		panel_3.add(lblItemReturnedsoFar);
 		
-		lblReturned = new JLabel("");
+		lblReturned = new JLabel("0");
 		panel_3.add(lblReturned);
 
 		panel_1 = new JPanel();
@@ -194,6 +194,10 @@ public class JPanel_Bill extends JPanel {
 //		JIFrame_SoldItem  soldAday = new JIFrame_SoldItem();
 		panel_2.setVisible(true);
 		findItemSoldinDAY(billModel.findItemSoldinDAY());
+		String total = String.valueOf(billModel.sumMoneyinDAY());
+		System.out.println(total);
+		String returnedCount = String.valueOf(billModel.billReturninDAY());
+		lblTotal.setText(total);lblReturned.setText(String.valueOf(returnedCount));
 	}
 	public void findItemSoldinDAY(List<BillDetail> bills) {
 		ItemModel modelItem = new ItemModel();
@@ -231,9 +235,6 @@ public class JPanel_Bill extends JPanel {
 		BillModel billModel = new BillModel();
 		fillDETAILtoTable(billModel.findAllBasedMainID(bill_id));
 		btnReturnThisItem.setVisible(true);
-		double total = billModel.sumMoneyinDAY();
-		int returnedCount = billModel.billReturninDAY();
-		lblTotal.setText(String.valueOf(total));lblReturned.setText(String.valueOf(returnedCount));
 	}
 
 	public void btnReturnThisItem_actionPerformed(ActionEvent e) {
