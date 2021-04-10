@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 06, 2021 at 02:16 PM
+-- Generation Time: Apr 10, 2021 at 03:01 PM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 8.0.2
 
@@ -65,7 +65,11 @@ INSERT INTO `db_bill` (`bill_id`, `date_print`, `bill_status`, `payment`, `total
 (23, '2021-04-06', 'APPROVED', 'VISA', 791.72, 5, 4),
 (24, '2021-04-06', 'APPROVED', 'CASH', 94.91, 4, 4),
 (25, '2021-04-06', 'APPROVED', 'MASTERCARD', 74.93, 5, 4),
-(26, '2021-04-06', 'APPROVED', 'MASTERCARD', 74.93, 5, 4);
+(26, '2021-04-06', 'APPROVED', 'MASTERCARD', 74.93, 5, 4),
+(27, '2021-04-08', 'APPROVED', 'VISA', 661.9, 1, 6),
+(28, '2021-04-10', 'APPROVED', 'CASH', 1297.44, 8, 4),
+(29, '2021-04-10', 'APPROVED', 'MASTERCARD', 612, 4, 4),
+(30, '2021-04-10', 'APPROVED', 'CASH', 19.96, 1, 4);
 
 -- --------------------------------------------------------
 
@@ -114,7 +118,12 @@ INSERT INTO `db_bill_detail` (`bill_detail_id`, `item_id`, `store_price`, `item_
 (31, 8, 4.99, 'bottle', 3, 'APPROVED', 22),
 (32, 2, 4.99, 'pcs', 0, 'RETURNED', 22),
 (33, 3, 14.99, 'pcs', 52, 'APPROVED', 23),
-(34, 1, 12.24, 'pcs', 1, 'APPROVED', 23);
+(34, 1, 12.24, 'pcs', 1, 'APPROVED', 23),
+(35, 8, 4.99, 'bottle', 0, 'RETURNED', 27),
+(36, 1, 12.24, 'pcs', 0, 'RETURNED', 27),
+(37, 1, 12.24, 'pcs', 106, 'APPROVED', 28),
+(38, 1, 12.24, 'pcs', 50, 'APPROVED', 29),
+(39, 8, 4.99, 'bottle', 4, 'APPROVED', 30);
 
 -- --------------------------------------------------------
 
@@ -127,8 +136,19 @@ CREATE TABLE `db_bill_import` (
   `supplier_id` int(11) NOT NULL,
   `total_price` double NOT NULL,
   `emp_id` int(11) NOT NULL,
+  `bill_status` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `date_import` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `db_bill_import`
+--
+
+INSERT INTO `db_bill_import` (`bill_import_id`, `supplier_id`, `total_price`, `emp_id`, `bill_status`, `date_import`) VALUES
+(1, 1, 350, 1, 'APPROVED', '2021-04-08'),
+(2, 1, 499, 1, 'APPROVED', '2021-04-08'),
+(3, 7, 500, 1, 'RESTOCK', '2021-04-10'),
+(4, 7, 500, 1, 'RESTOCK', '2021-04-10');
 
 -- --------------------------------------------------------
 
@@ -146,6 +166,16 @@ CREATE TABLE `db_bill_import_detail` (
   `bill_status` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `bill_import_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `db_bill_import_detail`
+--
+
+INSERT INTO `db_bill_import_detail` (`import_detail_id`, `item_name`, `import_price`, `store_price`, `item_quantity`, `item_unit`, `bill_status`, `bill_import_id`) VALUES
+(1, 'Banana', 3.5, 7.49, 100, 'pcs', 'APPROVED', 1),
+(2, 'Potato', 4.99, 7.99, 100, 'pcs', 'APPROVED', 2),
+(3, 'Fabric Mask', 5, 12.24, 100, 'pcs', 'ReStock', 3),
+(4, 'Fabric Mask', 5, 12.24, 100, 'pcs', 'ReStock', 4);
 
 -- --------------------------------------------------------
 
@@ -220,10 +250,13 @@ CREATE TABLE `db_item` (
 --
 
 INSERT INTO `db_item` (`item_id`, `item_name`, `item_store_price`, `item_import_price`, `store_quantity`, `item_unit`, `status`, `category_id`) VALUES
-(1, 'Fabric Mask', 12.24, 5, 100, 'pcs', 'FULL', 5),
-(2, 'Medical Mask', 4.99, 2, 100, 'pcs', 'FULL', 5),
+(1, 'Fabric Mask', 12.24, 5, 0, 'pcs', 'Out of Stock', 5),
+(2, 'Medical Mask', 4.99, 2, 102, 'pcs', 'FULL', 5),
 (3, '3D Mask', 14.99, 9.99, 100, 'pcs', 'FULL', 5),
-(8, 'Dalat Milk Mild', 4.99, 5.99, 100, 'bottle', 'FULL', 3);
+(8, 'Dalat Milk Mild', 4.99, 5.99, 96, 'bottle', 'FULL', 3),
+(9, 'Carrot', 2, 5.99, 100, 'pcs', 'FULL', 1),
+(10, 'Banana', 3.5, 7.49, 100, 'pcs', 'FULL', 1),
+(11, 'Potato', 4.99, 7.99, 100, 'pcs', 'FULL', 1);
 
 -- --------------------------------------------------------
 
@@ -246,6 +279,7 @@ INSERT INTO `db_supplier` (`id`, `supplier_name`) VALUES
 (3, 'DALAT FARM'),
 (4, 'FRESH FRUIT'),
 (5, 'LG'),
+(7, 'restock (not brand)'),
 (6, 'SG FARM');
 
 -- --------------------------------------------------------
@@ -271,7 +305,8 @@ INSERT INTO `db_user` (`id`, `username`, `password`, `emp_name`, `emp_role`) VAL
 (2, 'sm', '$2a$10$1n2ZQHMq3EehpND3EMuyk.rOfNJQK6IqITY8UAQ9A6dmcmhYuQWyy', 'Sale Manager', 'SM'),
 (3, 'im123', '$2a$10$KNTsQLUdTHPy.kxIBmXLweF6w0YwBGguOKdPd9odY6ogKu.bUH0qa', 'Inventory Manager', 'IM'),
 (4, 'sale123', '$2a$10$JDv/DiW.rbLpmqh7edflSe7diHRVrDLAnS/AF8fJZNb7sKffzF1Aa', 'Saleman', 'sale'),
-(5, 'test', '$2a$10$j5BaUtw/7YsEj8/cGXoYf.PJOtjvYRSsQB226Fqc6Tyb.hRaY5UJ2', 'test', 'SALE');
+(5, 'test', '$2a$10$j5BaUtw/7YsEj8/cGXoYf.PJOtjvYRSsQB226Fqc6Tyb.hRaY5UJ2', 'test', 'SALE'),
+(6, 'pop', '$2a$10$6CEHqXLkOaUhl42t.WXk6OPaZK60C0E2tLzODAEZ4RThuDudGTfJ6', 'pop', 'SALE');
 
 --
 -- Indexes for dumped tables
@@ -350,25 +385,25 @@ ALTER TABLE `db_user`
 -- AUTO_INCREMENT for table `db_bill`
 --
 ALTER TABLE `db_bill`
-  MODIFY `bill_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `bill_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `db_bill_detail`
 --
 ALTER TABLE `db_bill_detail`
-  MODIFY `bill_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `bill_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `db_bill_import`
 --
 ALTER TABLE `db_bill_import`
-  MODIFY `bill_import_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `bill_import_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `db_bill_import_detail`
 --
 ALTER TABLE `db_bill_import_detail`
-  MODIFY `import_detail_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `import_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `db_category`
@@ -386,19 +421,19 @@ ALTER TABLE `db_customer`
 -- AUTO_INCREMENT for table `db_item`
 --
 ALTER TABLE `db_item`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `db_supplier`
 --
 ALTER TABLE `db_supplier`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `db_user`
 --
 ALTER TABLE `db_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
