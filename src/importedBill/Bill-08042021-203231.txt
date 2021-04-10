@@ -1,0 +1,6 @@
+						Import Bill
+ID Bill: 2 - Date: 08042021-203231
+Employee ID: 1
+Item Name | | Quantity | | Import Price | | Store Price |
+Potato -  100 - 4.99 - 7.99
+Total: 499.0

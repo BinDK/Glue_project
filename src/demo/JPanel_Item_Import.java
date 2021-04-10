@@ -4,9 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.EventQueue;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JLabel;
@@ -40,6 +40,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.sql.PreparedStatement;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 
@@ -47,17 +50,15 @@ public class JPanel_Item_Import extends JPanel{
 
 	private JPanel contentPane;
 	private JTextField qtyItemField;
-	private JTable table;
 	private JComboBox cbCate;
 	private JComboBox cbiTem;
+	private JTable tableItem;
+	ItemModel modelItem = new ItemModel();
+	private Map<String, Object> values = new HashMap<String, Object>();
+
 
 	/**
-	 * Launch the application.
-	 */
-
-
-	/**
-	 * Create the frame.
+	 * Create the panel.
 	 */
 	public JPanel_Item_Import() {
 		setBounds(100, 100, 681, 547);
@@ -104,15 +105,12 @@ public class JPanel_Item_Import extends JPanel{
 
 		});
 
-		JPanel panel_2 = new JPanel();
-		contentPane.add(panel_2, BorderLayout.CENTER);
-		panel_2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
 		JScrollPane scrollPane = new JScrollPane();
-		panel_2.add(scrollPane);
-
-		table = new JTable();
-		panel_2.add(table);
+		contentPane.add(scrollPane, BorderLayout.CENTER);
+		
+		tableItem = new JTable();
+		scrollPane.setViewportView(tableItem);
 
 		JPanel panel_1 = new JPanel();
 		panel_1.setBackground(new Color(47, 79, 79));
@@ -129,10 +127,16 @@ public class JPanel_Item_Import extends JPanel{
 
 		JButton btnNewButton = new JButton("Items");
 		panel_1.add(btnNewButton);
+//		loadData();
+	}
+	public JPanel_Item_Import(Map<String, Object> values) {
+		this();
+		this.values = values;
 		loadData();
 	}
 
 	public void loadData() {
+		
 		ItemModel itemModel = new ItemModel();
 		DefaultComboBoxModel<Category> Catecbox = new DefaultComboBoxModel<Category>();
 		for (Category cate : itemModel.findAllCate()) {
@@ -140,17 +144,33 @@ public class JPanel_Item_Import extends JPanel{
 		}
 		cbCate.setModel(Catecbox);
 		cbCate.setRenderer(new RenderCaTecbox());
-
+		fillDatatoTable(modelItem.findAllLessthan10());
 	}
-
+	public void fillDatatoTable(List<iTem> items) {
+		DefaultTableModel table = new DefaultTableModel();
+		table.addColumn("Item ID");
+		table.addColumn("Item Name");
+		table.addColumn("Store Price");
+		table.addColumn("Import Price");
+		table.addColumn("Quantity");
+		table.addColumn("Unit");
+		table.addColumn("Status");
+		table.addColumn("Category ID");
+		for (iTem item : items) {
+			table.addRow(new Object[] {
+					item.getItem_id(), item.getItem_name(), item.getItem_store_price(),item.getItem_import_price(), 
+					item.getStore_quantity(), item.getItem_unit(), item.getStatus(), item.getCategory_id()
+					});
+		}
+		tableItem.setModel(table);
+	}
 	public void cbCate_actionPerformed(ActionEvent e) {
 		try {
 			ItemModel itemModel = new ItemModel();
 			DefaultComboBoxModel iTemcbox = (DefaultComboBoxModel) cbiTem.getModel();
 			Category cateID = (Category) cbCate.getSelectedItem();
 			cbiTem.removeAllItems();
-			for (iTem item : itemModel.findiTemOnCateID(cateID.getId())) {
-
+			for (iTem item : itemModel.findiTemOnCateIDqtyOver10(cateID.getId())) {
 				iTemcbox.addElement(item);
 			}
 			cbiTem.setModel(iTemcbox);
@@ -195,7 +215,7 @@ public class JPanel_Item_Import extends JPanel{
 //		} else {
 //		
 //		}
-		model.updateStock(qty, name); 
+//		model.updateStock(qty, name); 
 	}
 		
 }

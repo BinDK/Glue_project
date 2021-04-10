@@ -1,0 +1,6 @@
+						Purchase Bill
+ID Bill: 29 - Date: 10042021-130039
+Payment: MASTERCARDCustomer: 4
+Employee ID: 4
+Item: 1 - Quantity: 50Price: 12.24
+Total: 612.0

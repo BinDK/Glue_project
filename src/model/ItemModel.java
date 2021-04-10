@@ -18,7 +18,8 @@ public class ItemModel {
 	public List<iTem> findAll() {
 		List<iTem> items = new ArrayList<iTem>();
 		try {
-			PreparedStatement querry = ConnectDB.getConnection().prepareStatement("Select * from db_item where store_quantity < 10");
+			PreparedStatement querry = ConnectDB.getConnection()
+					.prepareStatement("Select * from db_item");
 
 			ResultSet result = querry.executeQuery();
 			SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
@@ -40,7 +41,32 @@ public class ItemModel {
 		}
 		return items;
 	}
+	public List<iTem> findAllLessthan10() {
+		List<iTem> items = new ArrayList<iTem>();
+		try {
+			PreparedStatement querry = ConnectDB.getConnection()
+					.prepareStatement("Select * from db_item where store_quantity < 10");
 
+			ResultSet result = querry.executeQuery();
+			SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
+			while (result.next()) {
+				iTem item = new iTem();
+				item.setItem_id(result.getInt("item_id"));
+				item.setItem_name(result.getString("item_name"));
+				item.setItem_store_price(result.getDouble("item_store_price"));
+				item.setItem_import_price(result.getDouble("item_import_price"));
+				item.setStore_quantity(result.getInt("store_quantity"));
+				item.setItem_unit(result.getString("item_unit"));
+				item.setStatus(result.getString("status"));
+				item.setCategory_id(result.getInt("category_id"));
+				items.add(item);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println(e.getMessage());
+		}
+		return items;
+	}
 	public List<Category> findAllCate() {
 		List<Category> cates = new ArrayList<Category>();
 		try {
@@ -114,7 +140,32 @@ public class ItemModel {
 		}
 		return items;
 	}
-
+	public List<iTem> findiTemOnCateIDqtyOver10(int cate_id) {
+		List<iTem> items = new ArrayList<iTem>();
+		try {
+			PreparedStatement querry = ConnectDB.getConnection()
+					.prepareStatement("Select * from db_item where category_id = ? and store_quantity > 10");
+			querry.setInt(1, cate_id);
+			ResultSet result = querry.executeQuery();
+			while (result.next()) {
+				iTem item = new iTem();
+				item.setItem_id(result.getInt("item_id"));
+				item.setItem_name(result.getString("item_name"));
+				item.setItem_store_price(result.getDouble("item_store_price"));
+				item.setItem_import_price(result.getDouble("item_import_price"));
+				item.setStore_quantity(result.getInt("store_quantity"));
+				item.setItem_unit(result.getString("item_unit"));
+				item.setStatus(result.getString("status"));
+				item.setCategory_id(result.getInt("category_id"));
+				items.add(item);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			items = null;
+			System.err.println(e.getMessage());
+		}
+		return items;
+	}
 	public boolean createCustomer(Customer customer) {
 		try {
 			PreparedStatement querry = ConnectDB.getConnection().prepareStatement(
@@ -164,10 +215,44 @@ public class ItemModel {
 			return null;
 		}
 	}
+	public String itemStatus(int id) {
+		String status = "";
+		try {
+			PreparedStatement querry = ConnectDB.getConnection()
+					.prepareStatement("SELECT status from db_item WHERE item_id = ?");
+			querry.setInt(1, id);
+			ResultSet result = querry.executeQuery();
+			if (result.next()) {
+				status = result.getString("status");
+			}
+			return status;
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println(e.getMessage());
+			return null;
+		}
+	}
+	public String itemName(int id) {
+		String name = "";
+		try {
+			PreparedStatement querry = ConnectDB.getConnection()
+					.prepareStatement("SELECT item_name from db_item WHERE item_id = ?");
+			querry.setInt(1, id);
+			ResultSet result = querry.executeQuery();
+			if (result.next()) {
+				name = result.getString("item_name");
+			}
+			return name;
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println(e.getMessage());
+			return null;
+		}
+	}
 	public boolean updateStock(int qty, String name) {
 		try {
-			PreparedStatement preparedStatement = ConnectDB.getConnection().prepareStatement(
-					"UPDATE `db_item` SET `store_quantity` =  ?  WHERE `item_name` = ? ");
+			PreparedStatement preparedStatement = ConnectDB.getConnection()
+					.prepareStatement("UPDATE `db_item` SET `store_quantity` =  ?  WHERE `item_name` = ? ");
 			preparedStatement.setInt(1, qty);
 			preparedStatement.setString(2, name);
 			return preparedStatement.executeUpdate() > 0;
@@ -176,7 +261,28 @@ public class ItemModel {
 			return false;
 		}
 	}
-
+	public boolean updateSaleStatus(int id) {
+		try {
+			PreparedStatement preparedStatement = ConnectDB.getConnection()
+					.prepareStatement("UPDATE `db_item` SET `status` =  'Out of Stock'  WHERE `item_id` = ? ");
+			preparedStatement.setInt(1, id);
+			return preparedStatement.executeUpdate() > 0;
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			return false;
+		}
+	}
+	public boolean updateReStockStatus(int id) {
+		try {
+			PreparedStatement preparedStatement = ConnectDB.getConnection()
+					.prepareStatement("UPDATE `db_item` SET `status` =  'FULL'  WHERE `item_id` = ? ");
+			preparedStatement.setInt(1, id);
+			return preparedStatement.executeUpdate() > 0;
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			return false;
+		}
+	}
 	public Integer findIDCate(String name) {
 		int quantity = 0;
 		try {
@@ -190,9 +296,39 @@ public class ItemModel {
 			return quantity;
 		} catch (Exception e) {
 			// TODO: handle exception
-				JOptionPane.showMessageDialog(null, "Không tìm thấy ID category.");
+			JOptionPane.showMessageDialog(null, "Không tìm thấy ID category.");
 			return null;
 		}
-		
+	}
+	public boolean insertItem(iTem item) {
+		try {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			PreparedStatement querry = ConnectDB.getConnection().prepareStatement(
+					"INSERT INTO `db_item`(`item_id`, `item_name`, `item_store_price`, `item_import_price`, `store_quantity`, `item_unit`, `status`, `category_id`) VALUES (NULL, ?, ?, ?, ?, ?, 'FULL', ?)");
+			querry.setString(1,item.getItem_name());
+			querry.setDouble(2,item.getItem_import_price());
+			querry.setDouble(3,item.getItem_store_price());
+			querry.setInt(4,item.getStore_quantity());
+			querry.setString(5,item.getItem_unit());
+			querry.setInt(6,item.getCategory_id());
+			return querry.executeUpdate() > 0;
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println(e.getMessage());
+			return false;
+		}
+	}
+	public boolean insertCate(Category cate) {
+		try {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			PreparedStatement querry = ConnectDB.getConnection().prepareStatement(
+					"INSERT INTO `db_item`(`id`, `cate_name`, `desciption`) VALUES (NULL, ?, '')");
+			querry.setString(1,cate.getCate_name());
+			return querry.executeUpdate() > 0;
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println(e.getMessage());
+			return false;
+		}
 	}
 }

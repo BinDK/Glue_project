@@ -23,6 +23,7 @@ import javax.swing.table.DefaultTableModel;
 
 import entities.Bill;
 import entities.BillDetail;
+import entities.Import;
 import model.BillModel;
 import model.ItemModel;
 
@@ -32,7 +33,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import java.awt.FlowLayout;
 
-public class JPanel_Bill extends JPanel {
+public class JPanel_Bill_Import extends JPanel {
 	private JTable tableBill;
 	private JButton jbuttonDeleteBill;
 	private JPanel panel_1;
@@ -48,7 +49,7 @@ public class JPanel_Bill extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public JPanel_Bill() {
+	public JPanel_Bill_Import() {
 		setLayout(new BorderLayout(0, 0));
 
 		JPanel panel = new JPanel();
@@ -169,19 +170,18 @@ public class JPanel_Bill extends JPanel {
 		fillDatatoTable(modelBill.findAll());
 	}
 
-	public void fillDatatoTable(List<Bill> bills) {
+	public void fillDatatoTable(List<Import> imports) {
 		DefaultTableModel table = new DefaultTableModel();
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-		table.addColumn("Bill ID");
-		table.addColumn("Date");
-		table.addColumn("Status");
-		table.addColumn("Payment");
+		table.addColumn("Bill Import ID");
+		table.addColumn("Supplier");
 		table.addColumn("Total Price");
-		table.addColumn("Customer ID");
 		table.addColumn("EMP ID");
-		for (Bill bill : bills) {
-			table.addRow(new Object[] { bill.getBill_id(), format.format(bill.getDate_print()), bill.getBill_status(),
-					bill.getPayment(), bill.getTotal_price(), bill.getCustomer_id(), bill.getEmp_id() });
+		table.addColumn("Status");
+		table.addColumn("Date");
+		for (Import bill : imports) {
+			table.addRow(new Object[] { bill.getBill_import_id(), bill.getSupplier_id(), bill.getTotal_price(),
+					  bill.getEmp_id(),bill.getBill_satus(), format.format(bill.getDate_import()) });
 		}
 		tableBill.setModel(table);
 	}
@@ -190,7 +190,7 @@ public class JPanel_Bill extends JPanel {
 		DefaultTableModel table = (DefaultTableModel) tableBill.getModel();
 		table.setRowCount(0);
 		BillModel billModel = new BillModel();
-		fillDatatoTable(billModel.searchCURRENTdate());
+		fillDatatoTable(billModel.searchImportCURRENTdate());
 //		JIFrame_SoldItem  soldAday = new JIFrame_SoldItem();
 		panel_2.setVisible(true);
 		findItemSoldinDAY(billModel.findItemSoldinDAY());

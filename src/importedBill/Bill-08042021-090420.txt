@@ -1,0 +1,6 @@
+						Import Bill
+ID Bill: 1 - Date: 08042021-090420
+Employee ID: 1
+Item Name | | Quantity | | Import Price | | Store Price |
+Banana -  100 - 3.5 - 7.49
+Total: 350.0

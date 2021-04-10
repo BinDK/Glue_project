@@ -36,10 +36,11 @@ public class JFrame_Main extends JFrame {
 	private JButton btnSelling;
 
 	private Map<String, Object> values = new HashMap<String, Object>();
-	private JMenuItem mntmCheckInventory;
+	private JMenuItem mntmLogut;
 	private JButton btnInventory;
 	private JButton btnAddUser;
 	private JButton btAdditemcate;
+	private JButton btnInveReStock;
 
 	/**
 	 * Launch the application.
@@ -75,14 +76,14 @@ public class JFrame_Main extends JFrame {
 		JMenu mnAction = new JMenu("Action");
 		menuBar.add(mnAction);
 
-		mntmCheckInventory = new JMenuItem("Check Inventory");
-		mnAction.add(mntmCheckInventory);
-
-		JMenu mnHelp = new JMenu("Help");
-		menuBar.add(mnHelp);
-
-		JMenuItem mntmAbout = new JMenuItem("About");
-		mnHelp.add(mntmAbout);
+		mntmLogut = new JMenuItem("Logut");
+		mntmLogut.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mntmLogut_actionPerformed(e);
+			}
+			
+		});
+		mnAction.add(mntmLogut);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -105,6 +106,7 @@ public class JFrame_Main extends JFrame {
 		});
 		
 		JButton btnProfile = new JButton("My Profile");
+		btnProfile.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnProfile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnProfile_actionPerformed(e);
@@ -154,11 +156,27 @@ public class JFrame_Main extends JFrame {
 		JPanelLEFT.add(btnInventory);
 		
 		btnAddUser = new JButton("Add User");
+		btnAddUser.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnAddUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnAddUser_actionPerformed(e);
 			}
 		});
+		
+		btnInveReStock = new JButton("ReStock");
+		btnInveReStock.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnInveReStock.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnInveReStock_actionPerformed(e);
+			}
+		});
+		btnInveReStock.setIcon(new ImageIcon(JFrame_Main.class.getResource("/resources/Save.png")));
+		btnInveReStock.setForeground(Color.WHITE);
+		btnInveReStock.setFont(new Font("Liberation Sans", Font.BOLD, 13));
+		btnInveReStock.setFocusPainted(false);
+		btnInveReStock.setContentAreaFilled(false);
+		btnInveReStock.setBorderPainted(false);
+		JPanelLEFT.add(btnInveReStock);
 		btnAddUser.setIcon(new ImageIcon(JFrame_Main.class.getResource("/resources/Profile.png")));
 		btnAddUser.setForeground(Color.WHITE);
 		btnAddUser.setFont(new Font("Liberation Sans", Font.BOLD, 13));
@@ -168,6 +186,7 @@ public class JFrame_Main extends JFrame {
 		JPanelLEFT.add(btnAddUser);
 		
 		btAdditemcate = new JButton("Add Item / CateGory");
+		btAdditemcate.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btAdditemcate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btAdditemcate_actionPerformed(e);
@@ -202,18 +221,35 @@ public class JFrame_Main extends JFrame {
 
 	public void loadData() {
 		User user = (User) values.get("account");
-		JOptionPane.showMessageDialog(null, "Yo yo what sup!! " + user.getEmp_name(), "", JOptionPane.YES_OPTION);
+		JOptionPane.showConfirmDialog(null, "Yo yo what sup!! " + user.getEmp_name(), "", JOptionPane.OK_OPTION);
 		assignMenu(user);
 	}
 
 	public void assignMenu(User user) {
 		if (user.getEmp_role().equalsIgnoreCase("sale")) {
 //			mnWelcome.setVisible(false);
-			mntmCheckInventory.setEnabled(false);
+			btAdditemcate.setVisible(false);
+			btnAddUser.setVisible(false);
+			btnInveReStock.setVisible(false);
 		} 
 		else if (user.getEmp_role().equalsIgnoreCase("IM")) {
 //			mnWelcome.setVisible(false);
-			btnInventory.setVisible(false);
+			btnSelling.setVisible(false);
+			btAdditemcate.setVisible(false);
+			btnAddUser.setVisible(false);
+			
+		}
+		else if (user.getEmp_role().equalsIgnoreCase("SM")) {
+//			mnWelcome.setVisible(false);
+			btnSelling.setVisible(false);
+			btAdditemcate.setVisible(false);
+			btnAddUser.setVisible(false);
+			btnInveReStock.setVisible(false);
+		} 
+		else if (user.getEmp_role().equalsIgnoreCase("ADMIN")) {
+//			mnWelcome.setVisible(false);
+			btnSelling.setVisible(false);
+			btnInveReStock.setVisible(false);
 		} 
 	}
 	public void btnProfile_actionPerformed(ActionEvent e) {
@@ -272,9 +308,20 @@ public class JFrame_Main extends JFrame {
 		JPanel_AddItemCate addItemCate = new JPanel_AddItemCate();
 		JPanelCenter.add(addItemCate);addItemCate.setVisible(true);
 	}
-
+	public void btnInveReStock_actionPerformed(ActionEvent e) {
+		clearJPanel();
+		User user = (User) values.get("account");
+		Map<String, Object> values = new HashMap<String, Object>();
+		values.put("account", user);
+		JPanel_Restock restock = new JPanel_Restock(values);
+		JPanelCenter.add(restock);restock.setVisible(true);
+	}
+	public void mntmLogut_actionPerformed(ActionEvent e) {
+	JFrame_Login logut = new JFrame_Login();
+	this.setVisible(false);logut.setVisible(true);
+	}
 	private void clearJPanel() {
-		JPanelCenter.removeAll();
+		JPanelCenter.removeAll();	
 		JPanelCenter.revalidate();
 		JPanelCenter.repaint();
 	}

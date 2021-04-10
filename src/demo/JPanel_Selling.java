@@ -49,6 +49,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.awt.event.ActionEvent;
+import javax.swing.UIManager;
 
 public class JPanel_Selling extends JPanel {
 	private JTextField customerNameField;
@@ -72,6 +73,7 @@ public class JPanel_Selling extends JPanel {
 	private JLabel lblEmployeeId;
 	private JLabel lblCate;
 	private JComboBox cbCate;
+	private JLabel lblCurrent;
 
 	/**
 	 * Create the panel.
@@ -113,6 +115,7 @@ public class JPanel_Selling extends JPanel {
 		buttonPannel.add(cuscbBox);
 		
 		btnCreateBill = new JButton("Create bill");
+		btnCreateBill.setEnabled(false);
 		btnCreateBill.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnCreateBill_actionPerformed(e);
@@ -190,6 +193,11 @@ public class JPanel_Selling extends JPanel {
 		panel_2.add(lblItem);
 		
 		cbiTem = new JComboBox();
+		cbiTem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cbiTem_actionPerformed(e);
+			}
+		});
 		cbiTem.setMaximumSize(new Dimension(10, 3));
 		panel_2.add(cbiTem);
 		
@@ -200,7 +208,11 @@ public class JPanel_Selling extends JPanel {
 			}
 		});
 		
-		lblQuantity = new JLabel("Quantity");
+		lblCurrent = new JLabel("Current Qty: ");
+		lblCurrent.setForeground(new Color(128, 128, 128));
+		panel_2.add(lblCurrent);
+		
+		lblQuantity = new JLabel("Quantity to buy");
 		panel_2.add(lblQuantity);
 		
 		qtyField = new JTextField();
@@ -230,7 +242,15 @@ public class JPanel_Selling extends JPanel {
 		JScrollPane scrollPane = new JScrollPane();
 		panel.add(scrollPane, BorderLayout.CENTER);
 		
-		tableOrder = new JTable();
+		tableOrder = new JTable() {
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+		};
 		scrollPane.setViewportView(tableOrder);
 		JPopupMenu popUp = new JPopupMenu();
 		JMenuItem deleteRow = new JMenuItem("Delete this item");
@@ -316,9 +336,6 @@ public JPanel_Selling(Map<String, Object> values) {
 	}
 
 	public void cbCate_actionPerformed(ActionEvent e) {
-//	int id = cbiTem.getSelectedIndex() + 1;
-//	ItemModel model = new ItemModel();
-//	DefaultTableModel table = new DefaultTableModel();
 		try {
 			ItemModel itemModel = new ItemModel();
 			DefaultComboBoxModel iTemcbox = (DefaultComboBoxModel) cbiTem.getModel();
@@ -334,6 +351,16 @@ public JPanel_Selling(Map<String, Object> values) {
 			System.err.println(e2.getMessage());
 		}
 	}
+	public void cbiTem_actionPerformed(ActionEvent e) {
+		try {
+			iTem itemID = (iTem) cbiTem.getSelectedItem();
+			ItemModel modelItem = new ItemModel();
+			int qtyiTem = modelItem.itemQty(itemID.getItem_id());
+			lblCurrent.setText("Currently Qty: " + qtyiTem);
+		} catch (Exception e2) {
+			// TODO: handle exception
+		}
+	}
 
 	public void btnAddOrder_actionPerformed(ActionEvent e) {
 		DefaultTableModel table = (DefaultTableModel) tableOrder.getModel();
@@ -341,17 +368,19 @@ public JPanel_Selling(Map<String, Object> values) {
 		if (qtyField.getText().isEmpty() || cbiTem.getSelectedItem() == null ) {
 			JOptionPane.showMessageDialog(null, "Quên số lượng hơặc chưa chọn Item!!");
 		} 
-//		else if (itemModel.itemQty(idd) < itemName.getStore_quantity()) {
-//			JOptionPane.showMessageDialog(null, "Qúa số lượng trong kho!! Số trong kho còn lại: " + itemModel.itemQty(idd));
-//		} 
 		else {
 			ItemModel itemModel = new ItemModel();
 			int idd = itemName.getItem_id();
-			System.out.println(idd);
+//			System.out.println(idd);
+			String statuss = itemModel.itemStatus(idd);
 			int qtyy = itemModel.itemQty(idd);
 			 if (qtyy < Integer.parseInt(qtyField.getText())) {
-					JOptionPane.showMessageDialog(null, "Qúa số lượng trong kho!! Số trong kho còn lại: " + itemModel.itemQty(idd));
-				} else {
+					JOptionPane.showMessageDialog(null, "Không còn hàng trong kho!! Số trong kho còn lại: " + itemModel.itemQty(idd));
+				} 
+				else if ( statuss.equalsIgnoreCase("Out of Stock") || statuss.equalsIgnoreCase("Inactive")) {
+					JOptionPane.showMessageDialog(null, "Hàng không được bán, status: " + statuss);
+				} 
+			 else {
 			int quantity = Integer.parseInt(qtyField.getText());
 			table.addRow(new Object[] { itemName.getItem_id(), itemName.getItem_name(), itemName.getItem_store_price(),
 					itemName.getItem_unit(), quantity, itemName.getItem_store_price() * quantity });
@@ -365,16 +394,12 @@ public JPanel_Selling(Map<String, Object> values) {
 	}
 	public void deleteRow_actionPerformed(ActionEvent e) {		
 		int[] tableRow = tableOrder.getSelectedRows();
-//		if (tableRow.length <  0) {
-//			System.out.println(tableRow.length);
-//		} else {
 			if (tableRow.length > 0 ) {
 				DefaultTableModel table = (DefaultTableModel) tableOrder.getModel();
 				for (int i = tableRow.length -1; i >= 0; i--) {
 					table.removeRow(tableRow[i]);
 				}
 			}
-//		}
 	}
 	public void btnPrice_actionPerformed(ActionEvent e) {
 		int tableRow = tableOrder.getRowCount();
@@ -385,6 +410,7 @@ public JPanel_Selling(Map<String, Object> values) {
 			convert += price;
 		}
 		priceField.setText(Double.toString(convert));
+		btnCreateBill.setEnabled(true);
 	}
 	public void btnAddcustomer_actionPerformed(ActionEvent e) {
 		Customer cus = new Customer();
@@ -416,7 +442,7 @@ try {
     SimpleDateFormat time = new SimpleDateFormat("ddMMyyyy-HHmmss");
     String fileName = time.format(new Date());
     FileOutputStream streamTo = new FileOutputStream("src//billPrint//Bill-"+fileName+".txt", true);
-    String save = "";
+    String save = "						Purchase Bill" + "\n\r";
     save += "ID Bill: " + bill_id + " - Date: " + time.format(new Date()) + "\n\r";
     save += "Payment: " + cbPayment.getSelectedItem().toString().trim() + "Customer: " + customer.getCustomer_id() + "\n\r";
     save += "Employee ID: " + Integer.parseInt(empIDText.getText());
@@ -443,6 +469,9 @@ try {
 			save += "\n\r" + "Item: " + id + " - Quantity: " + quantity + "Price: " + price;
 					dbBill.createBillDetail(detail, bill_id);
 					dbBill.removeItemQuantity(quantity, id);				
+					if (model.itemQty(id) == 0) {
+						model.updateSaleStatus(id);
+					}
 //			System.out.println(id + " - " +price + " - " + unit + " - " +quantity);
 
 	this.removeAll();

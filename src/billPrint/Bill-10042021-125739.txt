@@ -1,0 +1,6 @@
+						Purchase Bill
+ID Bill: 28 - Date: 10042021-125739
+Payment: CASHCustomer: 8
+Employee ID: 4
+Item: 1 - Quantity: 106Price: 12.24
+Total: 1297.44

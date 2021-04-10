@@ -22,12 +22,15 @@ import javax.swing.JList;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
+import javax.swing.JButton;
 
 public class JTest extends JFrame {
 
 	private JPanel contentPane;
 	private JComboBox cbCate;
 	private JComboBox cbiTem;
+	private JLabel lblHello;
+	private JButton btnTextLength;
 
 	/**
 	 * Launch the application.
@@ -75,6 +78,20 @@ public class JTest extends JFrame {
 		cbiTem = new JComboBox();
 		cbiTem.setBounds(221, 42, 110, 35);
 		contentPane.add(cbiTem);
+		
+		lblHello = new JLabel("hello");
+		lblHello.setForeground(Color.YELLOW);
+		lblHello.setBounds(75, 150, 70, 15);
+		contentPane.add(lblHello);
+		
+		btnTextLength = new JButton("text length");
+		btnTextLength.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnTextLength_actionPerformed(e);
+			}
+		});
+		btnTextLength.setBounds(237, 145, 117, 25);
+		contentPane.add(btnTextLength);
 		loadData();
 	}
 	public void loadData() {
@@ -124,6 +141,9 @@ public class JTest extends JFrame {
 			return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 		}		
 	}
-
-
+	public void btnTextLength_actionPerformed(ActionEvent e) {
+		String  a = lblHello.getText();
+		String b = a.substring(0,5-1);
+		System.out.println(b);
+	}
 }

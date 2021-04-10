@@ -1,0 +1,6 @@
+						Import Bill
+ID Bill: 1 - Date: 08042021-085850
+Employee ID: 1
+Item Name | | Quantity | | Import Price | | Store Price |
+Carrot -  100 - 2.0 - 5.99
+Total: 200.0

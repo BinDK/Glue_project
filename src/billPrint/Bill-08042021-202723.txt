@@ -1,0 +1,7 @@
+						Purchase Bill
+ID Bill: 27 - Date: 08042021-202723
+Payment: VISACustomer: 1
+Employee ID: 6
+Item: 8 - Quantity: 10Price: 4.99
+Item: 1 - Quantity: 50Price: 12.24
+Total: 661.9
