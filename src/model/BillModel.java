@@ -287,10 +287,10 @@ public class BillModel {
 		double total = 0;
 		try {
 			PreparedStatement querry = ConnectDB.getConnection()
-					.prepareStatement("	SELECT SUM(total_price) FROM `db_bill` WHERE date_print = CURRENT_DATE");
+					.prepareStatement("	SELECT SUM(total_price) as toto FROM `db_bill` WHERE date_print = CURRENT_DATE");
 			ResultSet result = querry.executeQuery();
 			if (result.next()) {
-				total = result.getDouble("total_price");
+				total = result.getDouble("toto");
 			}
 			return total;
 		} catch (Exception e) {
@@ -303,7 +303,7 @@ public class BillModel {
 		int total = 0;
 		try {
 			PreparedStatement querry = ConnectDB.getConnection()
-					.prepareStatement("	select COUNT(bill_detail_id) as count from `db_bill_detail` WHERE bill_id IN (select bill_id from `db_bill` where date_print = CURRENT_DATE) and `bill_status` = RETURNED;");
+					.prepareStatement("SELECT COUNT(bill_detail_id) as count from `db_bill_detail` WHERE bill_id IN (select bill_id from `db_bill` where date_print = CURRENT_DATE) and `bill_status` = RETURNED;");
 			ResultSet result = querry.executeQuery();
 			if (result.next()) {
 				total = result.getInt("count");
