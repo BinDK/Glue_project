@@ -303,7 +303,7 @@ public class BillModel {
 		int total = 0;
 		try {
 			PreparedStatement querry = ConnectDB.getConnection()
-					.prepareStatement("SELECT COUNT(bill_detail_id) as count from `db_bill_detail` WHERE bill_id IN (select bill_id from `db_bill` where date_print = CURRENT_DATE) and `bill_status` = RETURNED;");
+					.prepareStatement("SELECT COUNT(bill_detail_id) as count from `db_bill_detail` WHERE bill_id IN (select bill_id from `db_bill` where date_print = CURRENT_DATE) and `bill_status` = 'RETURNED';");
 			ResultSet result = querry.executeQuery();
 			if (result.next()) {
 				total = result.getInt("count");
