@@ -61,7 +61,7 @@ public class JPanel_Admin_User extends JPanel {
 				return false;
 			}
 		};
-
+tableUser.getTableHeader().setReorderingAllowed(false);
 		scrollPane.setViewportView(tableUser);
 		JPanel panel_1 = new JPanel();
 		panel_1.setBackground(new Color(112, 128, 144));
@@ -159,13 +159,13 @@ public class JPanel_Admin_User extends JPanel {
 		String fname = nameField.getText().toString().toLowerCase().trim();
 		String uname = unameField.getText().toString().toLowerCase().trim();
 		if (role == "") {
-			JOptionPane.showMessageDialog(null, "Chon Role");
+			JOptionPane.showMessageDialog(null, "Please select role!");
 		} else if (fname == "" || uname == "") {
-			JOptionPane.showMessageDialog(null, "Thieu Uname hoac Fname");
+			JOptionPane.showMessageDialog(null, "Missing username or Full name!");
 		} else if (userModel.find(uname) != null) {
-			JOptionPane.showMessageDialog(null, "Trùng username");
+			JOptionPane.showMessageDialog(null, "Username exist");
 		} else {
-			JOptionPane.showMessageDialog(null, "Đã them nhân viên với password là 123");
+			JOptionPane.showMessageDialog(null, "Just add User with password '123'!");
 			User user = new User();
 			user.setEmp_name(fname);
 			user.setUsername(uname);
@@ -180,7 +180,7 @@ public class JPanel_Admin_User extends JPanel {
 			int row = tableUser.getSelectedRow();
 			int id = (Integer) tableUser.getValueAt(row, 0);
 
-			int option = JOptionPane.showConfirmDialog(null, "Chac chan xoa", "Delete account id: " + id,
+			int option = JOptionPane.showConfirmDialog(null, "Are you sure?", "Delete account id: " + id,
 					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (option == JOptionPane.OK_OPTION) {
 				userModel.deleteUser(id);
@@ -188,7 +188,7 @@ public class JPanel_Admin_User extends JPanel {
 			}
 		} catch (Exception e2) {
 			// TODO: handle exception
-			JOptionPane.showMessageDialog(null, "Chon User de delete");
+			JOptionPane.showMessageDialog(null, "Please select User to delete.");
 		}
 	}
 
@@ -196,17 +196,17 @@ public class JPanel_Admin_User extends JPanel {
 		try {
 			int row = tableUser.getSelectedRow();
 			int id = (Integer) tableUser.getValueAt(row, 0);
-
-			int option = JOptionPane.showConfirmDialog(null, "Đổi mật khẩu thành 123 cho tài khoản có ID" + id,
+			String password = BCrypt.hashpw("123", BCrypt.gensalt());
+			int option = JOptionPane.showConfirmDialog(null, "Password set to '123' for User with ID: " + id,
 					"Change password", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (option == JOptionPane.OK_OPTION) {
-				userModel.changePassword(id);
-				JOptionPane.showMessageDialog(null, "Nói nhân viên chuyển mật khẩu lại");
+				userModel.changePassword(id,password);
+				JOptionPane.showMessageDialog(null, "Tell him/her to change their to change password with them desire!");
 				fillDatatoTable(userModel.findAll());
 			}
 		} catch (Exception e2) {
 			// TODO: handle exception
-			JOptionPane.showMessageDialog(null, "Chon User de doi pass");
+			JOptionPane.showMessageDialog(null, "Please select User to change password");
 		}
 	}
 }

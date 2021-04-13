@@ -60,16 +60,17 @@ public class UserModel {
 			return querry.executeUpdate() > 0;
 		} catch (Exception e) {
 			// TODO: handle exception
-			JOptionPane.showMessageDialog(null, "Không thể xóa nhân viên vì nhân viên đã xuất hóa đơn trước đó","",JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Can't deleted user because he/her is the one who produced purchase bill","",JOptionPane.WARNING_MESSAGE);
 			System.err.println(e.getMessage());
 			return false;
 		}
 	}
-	public boolean changePassword(int id) {
+	public boolean changePassword(int id,String password) {
 		try {
 			PreparedStatement querry = ConnectDB.getConnection().prepareStatement(
-					"UPDATE `db_user` SET `password` =  '123' where id = ?");
-			querry.setInt(1, id);
+					"UPDATE `db_user` SET `password` =  ? where id = ?");
+			querry.setString(1, password);
+			querry.setInt(2, id);
 			return querry.executeUpdate() > 0;
 		} catch (Exception e) {
 			// TODO: handle exception

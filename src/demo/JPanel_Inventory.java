@@ -4,7 +4,9 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 import java.awt.BorderLayout;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -36,7 +38,7 @@ import java.awt.FlowLayout;
 public class JPanel_Inventory extends JPanel {
 	private JTable tableItem;
 	private JComboBox comboBox;
-
+	private Map<String, Object> values = new HashMap<String, Object>();
 	/**
 	 * Create the panel.
 	 */
@@ -55,6 +57,7 @@ public class JPanel_Inventory extends JPanel {
 			}
 			
 		};
+		tableItem.getTableHeader().setReorderingAllowed(false);
 		scrollPane.setViewportView(tableItem);
 		JPopupMenu mn = new JPopupMenu();
 		JMenuItem mnDontSell = new JMenuItem("Not sell this item");
@@ -75,7 +78,11 @@ public class JPanel_Inventory extends JPanel {
 		panel_1.add(comboBox);
 		loadData();
 	}
-
+public JPanel_Inventory(Map<String, Object> values) {
+	this();
+	this.values = values;
+	loadData();
+}
 	public void loadData() {
 		ItemModel itemModel = new ItemModel();
 		fillDatatoTable(itemModel.findAll());

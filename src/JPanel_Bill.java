@@ -12,18 +12,36 @@ import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jfree.chart.ui.ApplicationFrame;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
+import org.jfree.ui.RefineryUtilities;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.ui.ApplicationFrame;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
+
 import entities.Bill;
 import entities.BillDetail;
-import entities.Import;
+import entities.User;
 import model.BillModel;
 import model.ItemModel;
 
@@ -33,8 +51,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import java.awt.FlowLayout;
 
-public class JPanel_Bill_Import extends JPanel {
-	private JTable tableImportBill;
+public class JPanel_Bill extends JPanel {
+	private JTable tableBill;
 	private JButton jbuttonDeleteBill;
 	private JPanel panel_1;
 	private JButton btnReturnThisItem;
@@ -46,11 +64,11 @@ public class JPanel_Bill_Import extends JPanel {
 	private JLabel lblItemReturnedsoFar;
 	private JLabel lblReturned;
 	private Map<String, Object> values = new HashMap<String, Object>();
-
+	private JButton btnMonthTrending;
 	/**
 	 * Create the panel.
 	 */
-	public JPanel_Bill_Import() {
+	public JPanel_Bill() {
 		setLayout(new BorderLayout(0, 0));
 
 		JPanel panel = new JPanel();
@@ -72,11 +90,12 @@ public class JPanel_Bill_Import extends JPanel {
 		panel.add(jbuttonBillReturned);
 
 		jbuttonDeleteBill = new JButton("Delete Bill");
-//		jbuttonDeleteBill.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent agr0) {
-//				jbuttonDeleteBill_actionPerformed(agr0);
-//			}
-//		});
+		jbuttonDeleteBill.setVisible(false);
+		jbuttonDeleteBill.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent agr0) {
+				jbuttonDeleteBill_actionPerformed(agr0);
+			}
+		});
 		panel.add(jbuttonDeleteBill);
 
 		btnReturnThisItem = new JButton("Return this item");
@@ -100,8 +119,15 @@ public class JPanel_Bill_Import extends JPanel {
 		JScrollPane scrollPane_1 = new JScrollPane();
 		panel_2.add(scrollPane_1, BorderLayout.CENTER);
 		
-		table_1 = new JTable();
-		table_1.getTableHeader().setReorderingAllowed(false);
+		table_1 = new JTable() {
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+		};
 		table_1.setBackground(new Color(237,255,236));
 		scrollPane_1.setViewportView(table_1);
 		
@@ -114,14 +140,22 @@ public class JPanel_Bill_Import extends JPanel {
 		lblNewLabel = new JLabel("Total money(so far): ");
 		panel_3.add(lblNewLabel);
 		
-		lblTotal = new JLabel("");
+		lblTotal = new JLabel("0");
 		panel_3.add(lblTotal);
 		
 		lblItemReturnedsoFar = new JLabel("iTem returned(so far): ");
 		panel_3.add(lblItemReturnedsoFar);
 		
-		lblReturned = new JLabel("");
+		lblReturned = new JLabel("0");
 		panel_3.add(lblReturned);
+		
+		btnMonthTrending = new JButton("Month Trending");
+		btnMonthTrending.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnMonthTrending_actionPerformed(e);
+			}
+		});
+		panel_3.add(btnMonthTrending);
 
 		panel_1 = new JPanel();
 		add(panel_1, BorderLayout.CENTER);
@@ -130,7 +164,15 @@ public class JPanel_Bill_Import extends JPanel {
 		JScrollPane scrollPane = new JScrollPane();
 		panel_1.add(scrollPane, BorderLayout.CENTER);
 
-		tableImportBill = new JTable();
+		tableBill = new JTable() {
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+		};
 		JPopupMenu mn = new JPopupMenu();
 		JMenuItem mnDetail = new JMenuItem("Detail of this bill");
 		mnDetail.addActionListener(new ActionListener() {
@@ -141,66 +183,76 @@ public class JPanel_Bill_Import extends JPanel {
 			}
 		});
 		mn.add(mnDetail);
-		tableImportBill.setComponentPopupMenu(mn);
-		tableImportBill.getTableHeader().setReorderingAllowed(false);
-		scrollPane.setViewportView(tableImportBill);
-
+		tableBill.setComponentPopupMenu(mn);
+		scrollPane.setViewportView(tableBill);
 
 	}
 
-//	public void jbuttonDeleteBill_actionPerformed(ActionEvent agr0) {
-//		try {
-//			int result = JOptionPane.showConfirmDialog(null, "Are you sure?", "Confirm", JOptionPane.YES_NO_OPTION);
-//			if (result == JOptionPane.YES_OPTION) {
-//				BillModel billModel = new BillModel();
-//				int selectedRow = tableImportBill.getSelectedRow();
-//				int id = Integer.parseInt(tableImportBill.getValueAt(selectedRow, 0).toString());
-//				if (billModel.delete(id)) {
-//					fillDatatoTable(billModel.findAll());
-//					jbuttonDeleteBill.setEnabled(false);
-//				} else {
-//					JOptionPane.showMessageDialog(null, "Failed");
-//				}
-//			}
-//		} catch (Exception e) {
-//			JOptionPane.showMessageDialog(null, "Failed");
-//		}
-//	}
-public JPanel_Bill_Import(Map<String, Object> values ) {
+	public void jbuttonDeleteBill_actionPerformed(ActionEvent agr0) {
+		try {
+			int result = JOptionPane.showConfirmDialog(null, "Are you sure?", "Confirm", JOptionPane.YES_NO_OPTION);
+			if (result == JOptionPane.YES_OPTION) {
+				BillModel billModel = new BillModel();
+				int selectedRow = tableBill.getSelectedRow();
+				int id = Integer.parseInt(tableBill.getValueAt(selectedRow, 0).toString());
+				if (billModel.delete(id)) {
+					fillDatatoTable(billModel.findAll());
+					jbuttonDeleteBill.setEnabled(false);
+				} else {
+					JOptionPane.showMessageDialog(null, "Failed");
+				}
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Failed");
+		}
+	}
+public JPanel_Bill(Map<String, Object> values) {
 	this();
 	this.values = values;
 	loadData();
 }
+	
 	public void loadData() {
 
 		BillModel modelBill = new BillModel();
-		fillDatatoTable(modelBill.searchALLImport());
+		fillDatatoTable(modelBill.findAll());
+		User user = (User) values.get("account");
+		assignMenu(user);
 	}
-
-	public void fillDatatoTable(List<Import> imports) {
+	public void assignMenu(User user) {
+		if (user.getEmp_role().equalsIgnoreCase("sale")) {
+			btnMonthTrending.setVisible(false);
+		}
+	}
+	public void fillDatatoTable(List<Bill> bills) {
 		DefaultTableModel table = new DefaultTableModel();
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-		table.addColumn("Bill Import ID");
-		table.addColumn("Supplier");
-		table.addColumn("Total Price");
-		table.addColumn("EMP ID");
-		table.addColumn("Status");
+		table.addColumn("Bill ID");
 		table.addColumn("Date");
-		for (Import bill : imports) {
-			table.addRow(new Object[] { bill.getBill_import_id(), bill.getSupplier_id(), bill.getTotal_price(),
-					  bill.getEmp_id(),bill.getBill_satus(), format.format(bill.getDate_import()) });
+		table.addColumn("Status");
+		table.addColumn("Payment");
+		table.addColumn("Total Price");
+		table.addColumn("Customer ID");
+		table.addColumn("EMP ID");
+		for (Bill bill : bills) {
+			table.addRow(new Object[] { bill.getBill_id(), format.format(bill.getDate_print()), bill.getBill_status(),
+					bill.getPayment(), bill.getTotal_price(), bill.getCustomer_id(), bill.getEmp_id() });
 		}
-		tableImportBill.setModel(table);
+		tableBill.setModel(table);
 	}
 
 	public void jbuttonListTodayBill_actionPerformed(ActionEvent agr0) {
-		DefaultTableModel table = (DefaultTableModel) tableImportBill.getModel();
+		DefaultTableModel table = (DefaultTableModel) tableBill.getModel();
 		table.setRowCount(0);
 		BillModel billModel = new BillModel();
-		fillDatatoTable(billModel.searchImportCURRENTdate());
-//		JIFrame_SoldItem  soldAday = new JIFrame_SoldItem();
+		fillDatatoTable(billModel.searchCURRENTdate());
 		panel_2.setVisible(true);
 		findItemSoldinDAY(billModel.findItemSoldinDAY());
+		String total = String.valueOf(billModel.sumMoneyinDAY());
+		String returnedCount = String.valueOf(billModel.billReturninDAY());
+		lblTotal.setText(total);lblReturned.setText(String.valueOf(returnedCount));
+		
+		
 	}
 	public void findItemSoldinDAY(List<BillDetail> bills) {
 		ItemModel modelItem = new ItemModel();
@@ -228,25 +280,22 @@ public JPanel_Bill_Import(Map<String, Object> values ) {
 			table.addRow(new Object[] { bill.getBill_detail_id(), bill.getItem_id(), bill.getStore_price(),
 					bill.getItem_unit(), bill.getItem_quantity(), bill.getBill_status(), bill.getBill_id() });
 		}
-		tableImportBill.setModel(table);
+		tableBill.setModel(table);
 	}
 
 	public void mnDetail_actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		int row = tableImportBill.getSelectedRow();
-		int bill_id = (int) tableImportBill.getValueAt(row, 0);
+		int row = tableBill.getSelectedRow();
+		int bill_id = (int) tableBill.getValueAt(row, 0);
 		BillModel billModel = new BillModel();
 		fillDETAILtoTable(billModel.findAllBasedMainID(bill_id));
 		btnReturnThisItem.setVisible(true);
-		double total = billModel.sumMoneyinDAY();
-		int returnedCount = billModel.billReturninDAY();
-		lblTotal.setText(String.valueOf(total));lblReturned.setText(String.valueOf(returnedCount));
 	}
 
 	public void btnReturnThisItem_actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		int row = tableImportBill.getSelectedRow();
-		int bill = (Integer) tableImportBill.getValueAt(row, 6);
+		int row = tableBill.getSelectedRow();
+		int bill = (Integer) tableBill.getValueAt(row, 6);
 		BillModel detail = new BillModel();
 		if (row >= 0) {
 			for (int i = row; i >= 0;) {
@@ -255,18 +304,18 @@ public JPanel_Bill_Import(Map<String, Object> values ) {
 				int item_quantity;
 				int bill_id;
 				String temp1, temp2, temp3, temp4;
-				temp1 = String.valueOf(tableImportBill.getValueAt(i, 0));
+				temp1 = String.valueOf(tableBill.getValueAt(i, 0));
 				bill_detail_id = Integer.parseInt(temp1);
-				temp2 = String.valueOf(tableImportBill.getValueAt(i, 1));
+				temp2 = String.valueOf(tableBill.getValueAt(i, 1));
 				item_id = Integer.parseInt(temp2);
-				temp3 = String.valueOf(tableImportBill.getValueAt(i, 4));
+				temp3 = String.valueOf(tableBill.getValueAt(i, 4));
 				item_quantity = Integer.parseInt(temp3);
-				temp4 = String.valueOf(tableImportBill.getValueAt(i, 6));
+				temp4 = String.valueOf(tableBill.getValueAt(i, 6));
 				bill_id = Integer.parseInt(temp4);
 //			System.out.println(bill_detail_id + " - " +item_id+ " - " + item_quantity+ " - " +bill_id);
 				detail.updateReturnedItemQuantity(item_quantity, item_id);
 				detail.updateStatusReturnedItem(bill_detail_id);
-				JOptionPane.showMessageDialog(null, "Item đã được hoàn và cộng vào kho");
+				JOptionPane.showMessageDialog(null, "Item return successfully and add to storgage");
 				fillDETAILtoTable(detail.findAllBasedMainID(bill));
 				break;
 			}
@@ -278,5 +327,48 @@ public JPanel_Bill_Import(Map<String, Object> values ) {
 		panel_1.removeAll();
 		panel_1.revalidate();
 		panel_1.repaint();
+	}
+	public void btnMonthTrending_actionPerformed(ActionEvent e) {
+		PieChart_AWT pie = new PieChart_AWT("Month sold trending");
+		pie.setSize(560, 367);
+		RefineryUtilities.centerFrameOnScreen(pie);
+		pie.setVisible(true);
+	}
+
+
+	public class PieChart_AWT extends ApplicationFrame {
+
+		public PieChart_AWT(String title) {
+			super(title);
+			setContentPane(createDemoPanel());
+		}
+
+		public PieDataset createDataset() {
+			DefaultPieDataset<String> dataset = new DefaultPieDataset();
+			BillModel billModel = new BillModel();
+			
+			ItemModel modelItem = new ItemModel();
+			for (BillDetail bill : billModel.findItemSoldinMONTH()) {
+				int id = bill.getItem_id();
+				String name = String.valueOf(modelItem.itemName(id).toString());
+				dataset.setValue(name, bill.getItem_quantity());
+			}
+
+			return dataset;
+		}
+
+		public JFreeChart createChart(PieDataset dataset) {
+			JFreeChart chart = ChartFactory.createPieChart("Item sale trend of the month", // chart title
+					dataset, // data
+					true, // include legend
+					true, false);
+
+			return chart;
+		}
+
+		public JPanel createDemoPanel() {
+			JFreeChart chart = createChart(createDataset());
+			return new ChartPanel(chart);
+		}
 	}
 }

@@ -110,6 +110,7 @@ public class JPanel_Item_Import extends JPanel{
 		contentPane.add(scrollPane, BorderLayout.CENTER);
 		
 		tableItem = new JTable();
+		tableItem.getTableHeader().setReorderingAllowed(false);
 		scrollPane.setViewportView(tableItem);
 
 		JPanel panel_1 = new JPanel();

@@ -270,7 +270,25 @@ public class BillModel {
 		List<BillDetail> bills = new ArrayList<BillDetail>();
 		try {
 			PreparedStatement preparedStatement = ConnectDB.getConnection()
-					.prepareStatement("select `item_id`, SUM(`item_quantity`) as count from `db_bill_detail` WHERE bill_id IN (select bill_id from `db_bill` where date_print = CURRENT_DATE) group by `item_id` order by count desc ");
+					.prepareStatement("select `item_id`, SUM(`item_quantity`) as count from `db_bill_detail` WHERE bill_id IN (select bill_id from `db_bill` where CURRENT_DATE()) group by `item_id` order by count desc ");
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				BillDetail bill = new BillDetail();
+				bill.setItem_id(resultSet.getInt("item_id"));
+				bill.setItem_quantity(resultSet.getInt("count"));
+				bills.add(bill);
+			}
+		} catch (Exception e) {
+			bills = null;
+		}
+		return bills;
+	}
+	//CHART
+	public List<BillDetail> findItemSoldinMONTH() {
+		List<BillDetail> bills = new ArrayList<BillDetail>();
+		try {
+			PreparedStatement preparedStatement = ConnectDB.getConnection()
+					.prepareStatement("select `item_id`, SUM(`item_quantity`) as count from `db_bill_detail` WHERE bill_id IN (select bill_id from `db_bill` where MONTH(CURRENT_DATE())) group by `item_id` order by count desc ");
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
 				BillDetail bill = new BillDetail();
@@ -314,6 +332,30 @@ public class BillModel {
 			JOptionPane.showMessageDialog(null, "No item returned yet!!");
 			return null;
 		}
+	}
+	public List<Import> searchALLImport() {
+		List<Import> imports= new ArrayList<Import>();
+
+		try {
+			PreparedStatement preparedStatement = ConnectDB.getConnection()
+					.prepareStatement("SELECT * FROM `db_bill_import` ORDER BY `db_bill_import`.`date_import` DESC;");
+
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				Import importt = new Import();
+				importt.setBill_import_id(resultSet.getInt("bill_import_id"));
+				importt.setSupplier_id(resultSet.getInt("supplier_id"));
+				importt.setTotal_price(resultSet.getDouble("total_price"));
+				importt.setEmp_id(resultSet.getInt("emp_id"));
+				importt.setBill_satus(resultSet.getString("bill_status"));
+				importt.setDate_import(resultSet.getDate("date_import"));
+				imports.add(importt);
+			}
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			imports = null;
+		}
+		return imports;
 	}
 	public List<Import> searchImportCURRENTdate() {
 		List<Import> imports= new ArrayList<Import>();

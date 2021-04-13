@@ -137,9 +137,10 @@ public class JPanel_Restock extends JPanel {
 		add(scrollPane, BorderLayout.CENTER);
 
 		tableItem = new JTable();
+		tableItem.getTableHeader().setReorderingAllowed(false);
 		scrollPane.setViewportView(tableItem);
 		JPopupMenu mn = new JPopupMenu();
-		JMenuItem deleteRow = new JMenuItem("Delect ROw");
+		JMenuItem deleteRow = new JMenuItem("Delect Row");
 		deleteRow.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -281,10 +282,11 @@ public class JPanel_Restock extends JPanel {
 		double convert = 0;
 		
 		for (int i = tableRow -1 ; i>=0 ;i--) {
+			int id= Integer.parseInt(table.getValueAt(i, 0).toString());
 			int qty = Integer.parseInt(table.getValueAt(i, 4).toString());
 			double import_price = Double.parseDouble(table.getValueAt(i, 3).toString());
 			if (qty == 0 || qty < 0) {
-				JOptionPane.showMessageDialog(null, "Đã xóa sản phẩm có QTY = 0 và bấm Total Price lại!");
+				JOptionPane.showMessageDialog(null, "The item which ID: "+id+",quantity column of that item should not be 0", "",JOptionPane.PLAIN_MESSAGE);
 				table.removeRow(i);
 			}else {
 				double price = (double) qty * import_price ;
@@ -371,7 +373,7 @@ int userID = user.getId();
 		    streamTo.write(save.getBytes());
 		    streamTo.flush();
 		    streamTo.close();
-			JOptionPane.showConfirmDialog(null, "Đã ReStock","",JOptionPane.YES_OPTION);
+			JOptionPane.showConfirmDialog(null, "Restock succesfully","",JOptionPane.YES_OPTION);
 
 		} catch (Exception e2) {
 			// TODO: handle exception

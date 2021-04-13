@@ -34,13 +34,13 @@ public class JFrame_Main extends JFrame {
 	private JPanel contentPane;
 	private JPanel JPanelCenter;
 	private JButton btnSelling;
-
 	private Map<String, Object> values = new HashMap<String, Object>();
 	private JMenuItem mntmLogut;
 	private JButton btnInventory;
 	private JButton btnAddUser;
 	private JButton btAdditemcate;
 	private JButton btnInveReStock;
+	private JButton btnBillImport;
 
 	/**
 	 * Launch the application.
@@ -146,6 +146,20 @@ public class JFrame_Main extends JFrame {
 				btnInventory_actionPerformed(e);
 			}
 		});
+		
+		btnBillImport = new JButton("Bill Import");
+		btnBillImport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnBillImport_actionPerformed(e);
+			}
+		});
+		btnBillImport.setIcon(new ImageIcon(JFrame_Main.class.getResource("/resources/Load.png")));
+		btnBillImport.setForeground(Color.WHITE);
+		btnBillImport.setFont(new Font("Liberation Sans", Font.BOLD, 13));
+		btnBillImport.setFocusPainted(false);
+		btnBillImport.setContentAreaFilled(false);
+		btnBillImport.setBorderPainted(false);
+		JPanelLEFT.add(btnBillImport);
 		btnInventory.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnInventory.setIcon(new ImageIcon(JFrame_Main.class.getResource("/resources/Loading.png")));
 		btnInventory.setForeground(Color.WHITE);
@@ -205,7 +219,7 @@ public class JFrame_Main extends JFrame {
 		JPanelBase.setBackground(new Color(51, 9, 19));
 		JPanelBase.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-		JLabel lblNewLabel = new JLabel("My Layout R@");
+		JLabel lblNewLabel = new JLabel("Glue Inventory eProject ©");
 		JPanelBase.add(lblNewLabel);
 
 		JPanelCenter = new JPanel();
@@ -221,7 +235,7 @@ public class JFrame_Main extends JFrame {
 
 	public void loadData() {
 		User user = (User) values.get("account");
-		JOptionPane.showConfirmDialog(null, "Yo yo what sup!! " + user.getEmp_name(), "", JOptionPane.OK_OPTION);
+		JOptionPane.showMessageDialog(null, "Welcome: " + user.getEmp_name(), "",JOptionPane.PLAIN_MESSAGE);
 		assignMenu(user);
 	}
 
@@ -231,13 +245,13 @@ public class JFrame_Main extends JFrame {
 			btAdditemcate.setVisible(false);
 			btnAddUser.setVisible(false);
 			btnInveReStock.setVisible(false);
+			btnBillImport.setVisible(false);
 		} 
 		else if (user.getEmp_role().equalsIgnoreCase("IM")) {
 //			mnWelcome.setVisible(false);
 			btnSelling.setVisible(false);
 			btAdditemcate.setVisible(false);
 			btnAddUser.setVisible(false);
-			
 		}
 		else if (user.getEmp_role().equalsIgnoreCase("SM")) {
 //			mnWelcome.setVisible(false);
@@ -257,6 +271,7 @@ public class JFrame_Main extends JFrame {
 		User user = (User) values.get("account");
 		Map<String, Object> values = new HashMap<String, Object>();
 		values.put("account", user);
+		
 		JPanel_Profile profile = new JPanel_Profile(values);
 		JPanelCenter.add(profile);
 		profile.setVisible(true);
@@ -279,17 +294,25 @@ public class JFrame_Main extends JFrame {
 		Map<String, Object> values = new HashMap<String, Object>();
 		values.put("account", user);
 		
-		JPanel_Bill bill = new JPanel_Bill();
+		JPanel_Bill bill = new JPanel_Bill(values);
 		JPanelCenter.add(bill);
 		bill.setVisible(true);
 	}
-
+	public void btnBillImport_actionPerformed(ActionEvent e) {
+		clearJPanel();
+		User user = (User) values.get("account");
+		Map<String, Object> values = new HashMap<String, Object>();
+		values.put("account", user);
+		JPanel_Bill_Import importBIll= new JPanel_Bill_Import(values);
+		JPanelCenter.add(importBIll); importBIll.setVisible(true);				
+	}
 	public void btnInventory_actionPerformed(ActionEvent e) {
 	clearJPanel();
 	User user = (User) values.get("account");
 	Map<String, Object> values = new HashMap<String, Object>();
 	values.put("account", user);
-	JPanel_Inventory item = new JPanel_Inventory();
+
+	JPanel_Inventory item = new JPanel_Inventory(values);
 	JPanelCenter.add(item); item.setVisible(true);
 	}
 	public void btnAddUser_actionPerformed(ActionEvent e) {
@@ -302,10 +325,10 @@ public class JFrame_Main extends JFrame {
 	}
 	public void btAdditemcate_actionPerformed(ActionEvent e) {
 		clearJPanel();
-//		User user = (User) values.get("account");
-//		Map<String, Object> values = new HashMap<String, Object>();
-//		values.put("account", user);		
-		JPanel_AddItemCate addItemCate = new JPanel_AddItemCate();
+		User user = (User) values.get("account");
+		Map<String, Object> values = new HashMap<String, Object>();
+		values.put("account", user);		
+		JPanel_AddItemCate addItemCate = new JPanel_AddItemCate(values);
 		JPanelCenter.add(addItemCate);addItemCate.setVisible(true);
 	}
 	public void btnInveReStock_actionPerformed(ActionEvent e) {

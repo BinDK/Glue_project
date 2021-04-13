@@ -1,0 +1,6 @@
+						Restock Import Bill
+ID Bill: 5 - Date: 10042021-202330
+Employee ID: 3
+Item Name | | Quantity | | Import Price | | Store Price |
+Carrot -  50
+Total: 299.5

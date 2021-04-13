@@ -275,7 +275,7 @@ public class ItemModel {
 	public boolean updateReStockStatus(int id) {
 		try {
 			PreparedStatement preparedStatement = ConnectDB.getConnection()
-					.prepareStatement("UPDATE `db_item` SET `status` =  'FULL'  WHERE `item_id` = ? ");
+					.prepareStatement("UPDATE `db_item` SET `status` =  'Available'  WHERE `item_id` = ? ");
 			preparedStatement.setInt(1, id);
 			return preparedStatement.executeUpdate() > 0;
 		} catch (Exception e) {
@@ -296,7 +296,7 @@ public class ItemModel {
 			return quantity;
 		} catch (Exception e) {
 			// TODO: handle exception
-			JOptionPane.showMessageDialog(null, "Không tìm thấy ID category.");
+			JOptionPane.showMessageDialog(null, "Can't find Category ID!");
 			return null;
 		}
 	}

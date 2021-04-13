@@ -24,6 +24,7 @@ import entities.Customer;
 import entities.Import;
 import entities.ImportDetail;
 import entities.Supplier;
+import entities.User;
 import entities.iTem;
 import model.BillModel;
 import model.ItemModel;
@@ -39,6 +40,8 @@ import java.awt.event.ActionListener;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.awt.event.ActionEvent;
 
 public class JPanel_AddItemCate extends JPanel {
@@ -50,7 +53,7 @@ public class JPanel_AddItemCate extends JPanel {
 	private JComboBox cbSupply;
 	private JButton btnTotalPrice;
 	private JButton btnClearOrder;
-
+	private Map<String, Object> values = new HashMap<String, Object>();
 	/**
 	 * Create the panel.
 	 */
@@ -146,6 +149,7 @@ public class JPanel_AddItemCate extends JPanel {
 		add(scrollPane, BorderLayout.CENTER);
 
 		tableItemCate = new JTable();
+		tableItemCate.getTableHeader().setReorderingAllowed(false);
 		JPopupMenu mn = new JPopupMenu();
 		JMenuItem mnDelete = new JMenuItem("Delete Row");
 		mnDelete.addActionListener(new ActionListener() {
@@ -157,9 +161,12 @@ public class JPanel_AddItemCate extends JPanel {
 		mn.add(mnDelete);
 		tableItemCate.setComponentPopupMenu(mn);
 		scrollPane.setViewportView(tableItemCate);
-		loadData();
 	}
-
+public JPanel_AddItemCate(Map<String, Object> values) {
+this();
+this.values = values;
+	loadData();
+}
 	public void loadData() {
 		DefaultTableModel table = new DefaultTableModel() {
 
@@ -269,7 +276,9 @@ try {
 			billImport.setDate_import(new Date());
 			billImport.setBill_satus("APPROVED");
 			billImport.setTotal_price(Double.parseDouble(lblPrice.getText().toString()));
-			billImport.setEmp_id(1);
+			User user = (User) values.get("account");
+			int userID = user.getId();
+			billImport.setEmp_id(userID);
 			billImport.setSupplier_id(convertSupplierID);
 			
 			BillModel dbBill = new BillModel();

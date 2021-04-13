@@ -116,11 +116,12 @@ public class JPanel_Profile extends JPanel {
 		User user = (User) values.get("account");
 		int id = user.getId();
 		String password = new String(passwordField.getPassword());
-		if (password.isEmpty()) {
-			JOptionPane.showMessageDialog(null, "Chua nhap may khau");
+		if (password.isEmpty() || password == "") {
+			JOptionPane.showMessageDialog(null, "Password can't be empty");
+		}	else {
+			JOptionPane.showMessageDialog(null, "Password updated");
+			user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
+			userModel.changePassword(user);
 		}
-		JOptionPane.showMessageDialog(null, "Da cap nhat mat khau");
-		user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
-		userModel.changePassword(user);
 	}
 }
