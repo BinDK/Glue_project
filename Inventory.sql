@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 10, 2021 at 03:01 PM
+-- Generation Time: Apr 15, 2021 at 11:10 AM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 8.0.2
 
@@ -69,7 +69,11 @@ INSERT INTO `db_bill` (`bill_id`, `date_print`, `bill_status`, `payment`, `total
 (27, '2021-04-08', 'APPROVED', 'VISA', 661.9, 1, 6),
 (28, '2021-04-10', 'APPROVED', 'CASH', 1297.44, 8, 4),
 (29, '2021-04-10', 'APPROVED', 'MASTERCARD', 612, 4, 4),
-(30, '2021-04-10', 'APPROVED', 'CASH', 19.96, 1, 4);
+(30, '2021-04-10', 'APPROVED', 'CASH', 19.96, 1, 4),
+(31, '2021-04-10', 'APPROVED', 'MASTERCARD', 689.02, 9, 4),
+(32, '2021-04-13', 'APPROVED', 'CASH', 92.83, 1, 4),
+(33, '2021-04-13', 'APPROVED', 'CASH', 14.99, 1, 4),
+(34, '2021-04-13', 'APPROVED', 'MASTERCARD', 209.86, 1, 4);
 
 -- --------------------------------------------------------
 
@@ -123,7 +127,13 @@ INSERT INTO `db_bill_detail` (`bill_detail_id`, `item_id`, `store_price`, `item_
 (36, 1, 12.24, 'pcs', 0, 'RETURNED', 27),
 (37, 1, 12.24, 'pcs', 106, 'APPROVED', 28),
 (38, 1, 12.24, 'pcs', 50, 'APPROVED', 29),
-(39, 8, 4.99, 'bottle', 4, 'APPROVED', 30);
+(39, 8, 4.99, 'bottle', 0, 'RETURNED', 30),
+(40, 2, 4.99, 'pcs', 98, 'APPROVED', 31),
+(41, 9, 2, 'pcs', 100, 'APPROVED', 31),
+(42, 2, 4.99, 'pcs', 2, 'APPROVED', 32),
+(43, 9, 2, 'pcs', 4, 'APPROVED', 32),
+(44, 11, 4.99, 'pcs', 0, 'RETURNED', 32),
+(45, 3, 14.99, 'pcs', 1, 'APPROVED', 33);
 
 -- --------------------------------------------------------
 
@@ -148,7 +158,14 @@ INSERT INTO `db_bill_import` (`bill_import_id`, `supplier_id`, `total_price`, `e
 (1, 1, 350, 1, 'APPROVED', '2021-04-08'),
 (2, 1, 499, 1, 'APPROVED', '2021-04-08'),
 (3, 7, 500, 1, 'RESTOCK', '2021-04-10'),
-(4, 7, 500, 1, 'RESTOCK', '2021-04-10');
+(4, 7, 500, 1, 'RESTOCK', '2021-04-10'),
+(5, 7, 299.5, 3, 'RESTOCK', '2021-04-10'),
+(6, 7, 9.99, 3, 'RESTOCK', '2021-04-10'),
+(7, 1, 499, 1, 'APPROVED', '2021-04-10'),
+(8, 7, 38, 3, 'RESTOCK', '2021-04-13'),
+(9, 7, 30, 3, 'RESTOCK', '2021-04-13'),
+(10, 7, 50, 3, 'RESTOCK', '2021-04-14'),
+(11, 1, 1452.99, 1, 'APPROVED', '2021-04-15');
 
 -- --------------------------------------------------------
 
@@ -175,7 +192,17 @@ INSERT INTO `db_bill_import_detail` (`import_detail_id`, `item_name`, `import_pr
 (1, 'Banana', 3.5, 7.49, 100, 'pcs', 'APPROVED', 1),
 (2, 'Potato', 4.99, 7.99, 100, 'pcs', 'APPROVED', 2),
 (3, 'Fabric Mask', 5, 12.24, 100, 'pcs', 'ReStock', 3),
-(4, 'Fabric Mask', 5, 12.24, 100, 'pcs', 'ReStock', 4);
+(4, 'Fabric Mask', 5, 12.24, 100, 'pcs', 'ReStock', 4),
+(5, 'Carrot', 5.99, 2, 50, 'pcs', 'ReStock', 5),
+(6, '3D Mask', 9.99, 14.99, 1, 'pcs', 'ReStock', 6),
+(7, 'Eggplant', 4.99, 8.99, 100, 'pcs', 'APPROVED', 7),
+(8, 'Medical Mask', 2, 4.99, 15, 'pcs', 'ReStock', 9),
+(9, 'Fabric Mask', 5, 12.24, 10, 'pcs', 'ReStock', 10),
+(10, 'Cheap Plastic Raincoat', 3, 4.5, 45, 'pcs', 'APPROVED', 11),
+(11, 'Apple', 1.26, 3.5, 24, 'Kgs', 'APPROVED', 11),
+(12, 'Banana', 2.99, 4.99, 30, 'Kgs', 'Available', 11),
+(13, 'Anker 18W PD Charger', 14.27, 24.99, 35, 'pcs', 'Available', 11),
+(14, 'iPhone Xr Case', 4.99, 9.99, 140, 'pcs', 'Available', 11);
 
 -- --------------------------------------------------------
 
@@ -226,7 +253,8 @@ INSERT INTO `db_customer` (`customer_id`, `customer_name`, `customer_phone`, `de
 (5, 'POP2', 1912123, ''),
 (6, 'asdas', 12121, ''),
 (7, '1212', 34114, ''),
-(8, 'pop', 1212, '');
+(8, 'pop', 1212, ''),
+(9, 'Popeyes', 229229, '');
 
 -- --------------------------------------------------------
 
@@ -250,13 +278,18 @@ CREATE TABLE `db_item` (
 --
 
 INSERT INTO `db_item` (`item_id`, `item_name`, `item_store_price`, `item_import_price`, `store_quantity`, `item_unit`, `status`, `category_id`) VALUES
-(1, 'Fabric Mask', 12.24, 5, 0, 'pcs', 'Out of Stock', 5),
-(2, 'Medical Mask', 4.99, 2, 102, 'pcs', 'FULL', 5),
+(1, 'Fabric Mask', 12.24, 5, 10, 'pcs', 'Out of Stock', 5),
+(2, 'Medical Mask', 4.99, 2, 17, 'pcs', 'Available', 5),
 (3, '3D Mask', 14.99, 9.99, 100, 'pcs', 'FULL', 5),
-(8, 'Dalat Milk Mild', 4.99, 5.99, 96, 'bottle', 'FULL', 3),
-(9, 'Carrot', 2, 5.99, 100, 'pcs', 'FULL', 1),
+(8, 'Dalat Milk Mild', 4.99, 5.99, 100, 'bottle', 'FULL', 3),
+(9, 'Carrot', 2, 5.99, 46, 'pcs', 'FULL', 1),
 (10, 'Banana', 3.5, 7.49, 100, 'pcs', 'FULL', 1),
-(11, 'Potato', 4.99, 7.99, 100, 'pcs', 'FULL', 1);
+(11, 'Potato', 4.99, 7.99, 100, 'pcs', 'FULL', 1),
+(12, 'Eggplant', 4.99, 8.99, 100, 'pcs', 'FULL', 1),
+(13, 'Cheap Plastic Raincoat', 3, 4.5, 45, 'pcs', 'FULL', 4),
+(14, 'Apple', 1.26, 3.5, 24, 'Kgs', 'FULL', 2),
+(16, 'Anker 18W PD Charger', 14.27, 24.99, 35, 'pcs', 'FULL', 6),
+(17, 'iPhone Xr Case', 4.99, 9.99, 140, 'pcs', 'FULL', 6);
 
 -- --------------------------------------------------------
 
@@ -304,7 +337,7 @@ INSERT INTO `db_user` (`id`, `username`, `password`, `emp_name`, `emp_role`) VAL
 (1, 'admin', '$2a$10$T3F5sxE3NzA5Aj4Kixsml.3dFQMddcvPViP/3YYAh28rzQ6LnGQXG', 'Administrator', 'ADMIN'),
 (2, 'sm', '$2a$10$1n2ZQHMq3EehpND3EMuyk.rOfNJQK6IqITY8UAQ9A6dmcmhYuQWyy', 'Sale Manager', 'SM'),
 (3, 'im123', '$2a$10$KNTsQLUdTHPy.kxIBmXLweF6w0YwBGguOKdPd9odY6ogKu.bUH0qa', 'Inventory Manager', 'IM'),
-(4, 'sale123', '$2a$10$JDv/DiW.rbLpmqh7edflSe7diHRVrDLAnS/AF8fJZNb7sKffzF1Aa', 'Saleman', 'sale'),
+(4, 'sale123', '$2a$10$LMq1qiRRN2TK453W3VsLNeqaW9OvlFbJg4wd87/M58bFhG8ozu4Te', 'Saleman', 'sale'),
 (5, 'test', '$2a$10$j5BaUtw/7YsEj8/cGXoYf.PJOtjvYRSsQB226Fqc6Tyb.hRaY5UJ2', 'test', 'SALE'),
 (6, 'pop', '$2a$10$6CEHqXLkOaUhl42t.WXk6OPaZK60C0E2tLzODAEZ4RThuDudGTfJ6', 'pop', 'SALE');
 
@@ -385,25 +418,25 @@ ALTER TABLE `db_user`
 -- AUTO_INCREMENT for table `db_bill`
 --
 ALTER TABLE `db_bill`
-  MODIFY `bill_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `bill_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `db_bill_detail`
 --
 ALTER TABLE `db_bill_detail`
-  MODIFY `bill_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `bill_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `db_bill_import`
 --
 ALTER TABLE `db_bill_import`
-  MODIFY `bill_import_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `bill_import_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `db_bill_import_detail`
 --
 ALTER TABLE `db_bill_import_detail`
-  MODIFY `import_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `import_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `db_category`
@@ -415,13 +448,13 @@ ALTER TABLE `db_category`
 -- AUTO_INCREMENT for table `db_customer`
 --
 ALTER TABLE `db_customer`
-  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `db_item`
 --
 ALTER TABLE `db_item`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `db_supplier`
