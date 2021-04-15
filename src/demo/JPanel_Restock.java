@@ -41,6 +41,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import javax.swing.BoxLayout;
@@ -313,7 +314,22 @@ int userID = user.getId();
 
 			SimpleDateFormat time = new SimpleDateFormat("ddMMyyyy-HHmmss");
 			String fileName = time.format(new Date());
-    FileOutputStream streamTo = new FileOutputStream("src//importedBill//ReStock-Bill-"+fileName+".txt", true);
+			
+			String username = System.getProperty("user.name");
+            String osname = System.getProperty("os.name");
+            String folder = "";
+            if (osname.equalsIgnoreCase("linux")) {
+    			File theDir = new File("/home/" + username +"/Documents/importBill");
+    			if (!theDir.exists())theDir.mkdirs();
+    			folder = String.valueOf(theDir);
+			}//home/pixie/Documents
+            else if(osname.equalsIgnoreCase("windows 10")) {
+            	File theDir = new File("C:/Users/" + username +"/importBill");
+            	if (!theDir.exists())theDir.mkdirs();            	
+            	folder = String.valueOf(theDir);
+            }
+			FileOutputStream streamTo = new FileOutputStream(folder+"/ReStock-Bill-"+fileName+".txt", true);
+
     String save = "						Restock Import Bill" + "\n\r";
     save += "ID Bill: " + bill_import_id + " - Date: " + time.format(new Date()) + "\n\r";
 

@@ -301,11 +301,47 @@ public class BillModel {
 		}
 		return bills;
 	}
+	public List<ImportDetail> findItemImportinMONTH() {
+		List<ImportDetail> bills = new ArrayList<ImportDetail>();
+		try {
+			PreparedStatement preparedStatement = ConnectDB.getConnection()
+					.prepareStatement("select `item_name`, SUM(`item_quantity`) as count from `db_bill_import_detail` WHERE bill_import_id IN (select bill_import_id from `db_bill_import` where MONTH(CURRENT_DATE())) group by `item_name` order by count desc ");
+			ResultSet resultSet = preparedStatement.executeQuery();
+		
+			while (resultSet.next()) {
+				ImportDetail bill = new ImportDetail();
+				bill.setItem_name(resultSet.getString("item_name"));
+				bill.setItem_quantity(resultSet.getInt("count"));
+				bills.add(bill);
+			}
+		} catch (Exception e) {
+			bills = null;
+		}
+		return bills;
+	}
+	// END CHART
+	
 	public Double sumMoneyinDAY() {
 		double total = 0;
 		try {
 			PreparedStatement querry = ConnectDB.getConnection()
 					.prepareStatement("	SELECT SUM(total_price) as toto FROM `db_bill` WHERE date_print = CURRENT_DATE");
+			ResultSet result = querry.executeQuery();
+			if (result.next()) {
+				total = result.getDouble("toto");
+			}
+			return total;
+		} catch (Exception e) {
+			// TODO: handle exception
+			JOptionPane.showMessageDialog(null, "Got no transaction yet!!");
+			return null;
+		}
+	}
+	public Double sumImportMoneyinDAY() {
+		double total = 0;
+		try {
+			PreparedStatement querry = ConnectDB.getConnection()
+					.prepareStatement("	SELECT SUM(total_price) as toto FROM `db_bill_import` WHERE date_import = CURRENT_DATE()");
 			ResultSet result = querry.executeQuery();
 			if (result.next()) {
 				total = result.getDouble("toto");
@@ -333,6 +369,7 @@ public class BillModel {
 			return null;
 		}
 	}
+	//IMPORT
 	public List<Import> searchALLImport() {
 		List<Import> imports= new ArrayList<Import>();
 
@@ -357,12 +394,38 @@ public class BillModel {
 		}
 		return imports;
 	}
+	
+	public List<ImportDetail> findAllBasedMainImportID(int bill_id) {
+		List<ImportDetail> bills = new ArrayList<ImportDetail>();
+		try {
+			PreparedStatement preparedStatement = ConnectDB.getConnection()
+					.prepareStatement("SELECT * FROM `db_bill_import_detail` WHERE `bill_import_id` = ?");
+			preparedStatement.setInt(1, bill_id);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				ImportDetail bill = new ImportDetail();
+				bill.setImport_detail_id(resultSet.getInt("import_detail_id"));
+				bill.setItem_name(resultSet.getString("item_name"));
+				bill.setImport_price(resultSet.getDouble("import_price"));
+				bill.setStore_price(resultSet.getDouble("store_price"));
+				bill.setItem_quantity(resultSet.getInt("item_quantity"));
+				bill.setItem_unit(resultSet.getString("item_unit"));
+				bill.setBill_status(resultSet.getString("bill_status"));
+				bill.setBill_import_id(resultSet.getInt("bill_import_id"));
+				bills.add(bill);
+			}
+		} catch (Exception e) {
+			bills = null;
+		}
+		return bills;
+	}
+	
 	public List<Import> searchImportCURRENTdate() {
 		List<Import> imports= new ArrayList<Import>();
 
 		try {
 			PreparedStatement preparedStatement = ConnectDB.getConnection()
-					.prepareStatement("select * from db_import where date_import = current_date();");
+					.prepareStatement("select * from db_bill_import where date_import = current_date();");
 
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {

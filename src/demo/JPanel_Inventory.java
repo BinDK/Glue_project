@@ -15,6 +15,7 @@ import javax.swing.table.DefaultTableModel;
 import demo.JPanel_AddItemCate.RenderCaTecbox;
 import entities.BillDetail;
 import entities.Category;
+import entities.User;
 import entities.iTem;
 import model.ItemModel;
 
@@ -32,6 +33,7 @@ import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 import java.awt.FlowLayout;
 
@@ -39,6 +41,8 @@ public class JPanel_Inventory extends JPanel {
 	private JTable tableItem;
 	private JComboBox comboBox;
 	private Map<String, Object> values = new HashMap<String, Object>();
+	private JMenuItem mnDontSell;
+	private JPopupMenu mn;
 	/**
 	 * Create the panel.
 	 */
@@ -61,6 +65,14 @@ public class JPanel_Inventory extends JPanel {
 		scrollPane.setViewportView(tableItem);
 		JPopupMenu mn = new JPopupMenu();
 		JMenuItem mnDontSell = new JMenuItem("Not sell this item");
+		mnDontSell.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				mnDontSell_actionPerformed(e);
+			}
+		});
 		mn.add(mnDontSell);
 		tableItem.setComponentPopupMenu(mn);
 		JPanel panel_1 = new JPanel();
@@ -76,7 +88,7 @@ public class JPanel_Inventory extends JPanel {
 			}
 		});
 		panel_1.add(comboBox);
-		loadData();
+//		loadData();
 	}
 public JPanel_Inventory(Map<String, Object> values) {
 	this();
@@ -93,7 +105,13 @@ public JPanel_Inventory(Map<String, Object> values) {
 		}
 		comboBox.setModel(Catecbox);
 		comboBox.setRenderer(new RenderCaTecbox());
+		User user = (User) values.get("account");
+		assignMenu(user);
 	}
+	public void assignMenu(User user) {
+
+	}
+	
 	public class RenderCaTecbox extends DefaultListCellRenderer {
 		@Override
 		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
@@ -126,6 +144,15 @@ public JPanel_Inventory(Map<String, Object> values) {
 					});
 		}
 		tableItem.setModel(table);
+	}
+	public void mnDontSell_actionPerformed(ActionEvent e) {
+		int row = tableItem.getSelectedRow();
+		int bill_id = (int) tableItem.getValueAt(row, 0);
+		ItemModel model = new ItemModel();
+		System.out.println(bill_id);
+		if (model.notSellStatus(bill_id)) {
+			JOptionPane.showMessageDialog(null, "Item set to Unavailable ", "",JOptionPane.PLAIN_MESSAGE);
+		}
 	}
 
 }

@@ -1,0 +1,6 @@
+						Purchase Bill
+ID Bill: 33 - Date: 13042021-193853
+Payment: CASHCustomer: 1
+Employee ID: 4
+Item: 3 - Quantity: 1Price: 14.99
+Total: 14.99

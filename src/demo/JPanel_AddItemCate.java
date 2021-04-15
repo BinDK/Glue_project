@@ -37,6 +37,7 @@ import javax.swing.JComboBox;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -264,7 +265,7 @@ try {
 
 	lblPrice.setText(Double.toString(convert));
 } catch (Exception e2) {
-	JOptionPane.showMessageDialog(null, "Cột Giá Nhập phải là số!!!","", JOptionPane.OK_OPTION);
+	JOptionPane.showMessageDialog(null, "Import Price/ Store price must be a number","", JOptionPane.OK_OPTION);
 }
 	}
 
@@ -286,7 +287,21 @@ try {
 
 			SimpleDateFormat time = new SimpleDateFormat("ddMMyyyy-HHmmss");
 			String fileName = time.format(new Date());
-    FileOutputStream streamTo = new FileOutputStream("src//importedBill//Bill-"+fileName+".txt", true);
+			String username = System.getProperty("user.name");
+            String osname = System.getProperty("os.name");
+            String folder = "";
+            if (osname.equalsIgnoreCase("linux")) {
+    			File theDir = new File("/home/" + username +"/Documents/importBill");
+    			if (!theDir.exists())theDir.mkdirs();
+    			folder = String.valueOf(theDir);
+			}//home/pixie/Documents
+            else if(osname.equalsIgnoreCase("windows 10")) {
+            	File theDir = new File("C:/Users/" + username +"/importBill");
+            	if (!theDir.exists())theDir.mkdirs();            	
+            	folder = String.valueOf(theDir);
+            }
+			FileOutputStream streamTo = new FileOutputStream(folder+"/Import-Bill-"+fileName+".txt", true);
+
     String save = "						Import Bill" + "\n\r";
     save += "ID Bill: " + bill_import_id + " - Date: " + time.format(new Date()) + "\n\r";
 

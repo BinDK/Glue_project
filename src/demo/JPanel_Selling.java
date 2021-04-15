@@ -29,8 +29,6 @@ import entities.iTem;
 import model.BillModel;
 import model.CustomerModel;
 import model.ItemModel;
-import model.JTest.RenderCaTecbox;
-import model.JTest.RenderiTEMcbox;
 
 import javax.swing.JComboBox;
 import javax.swing.JButton;
@@ -40,6 +38,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -251,6 +250,7 @@ public class JPanel_Selling extends JPanel {
 			}
 			
 		};
+		tableOrder.getTableHeader().setReorderingAllowed(false);
 		scrollPane.setViewportView(tableOrder);
 		JPopupMenu popUp = new JPopupMenu();
 		JMenuItem deleteRow = new JMenuItem("Delete this item");
@@ -366,7 +366,7 @@ public JPanel_Selling(Map<String, Object> values) {
 		DefaultTableModel table = (DefaultTableModel) tableOrder.getModel();
 		iTem itemName = (iTem) cbiTem.getSelectedItem();
 		if (qtyField.getText().isEmpty() || cbiTem.getSelectedItem() == null ) {
-			JOptionPane.showMessageDialog(null, "Quên số lượng hơặc chưa chọn Item!!");
+			JOptionPane.showMessageDialog(null, "Quantity is zero or not choose any item!");
 		} 
 		else {
 			ItemModel itemModel = new ItemModel();
@@ -375,15 +375,15 @@ public JPanel_Selling(Map<String, Object> values) {
 			String statuss = itemModel.itemStatus(idd);
 			int qtyy = itemModel.itemQty(idd);
 			 if (qtyy < Integer.parseInt(qtyField.getText())) {
-					JOptionPane.showMessageDialog(null, "Không còn hàng trong kho!! Số trong kho còn lại: " + itemModel.itemQty(idd));
+					JOptionPane.showMessageDialog(null, "Not enough items in storage: " + itemModel.itemQty(idd));
 				} 
-				else if ( statuss.equalsIgnoreCase("Out of Stock") || statuss.equalsIgnoreCase("Inactive")) {
-					JOptionPane.showMessageDialog(null, "Hàng không được bán, status: " + statuss);
+				else if ( statuss.equalsIgnoreCase("Out of Stock") || statuss.equalsIgnoreCase("Unavailable")) {
+					JOptionPane.showMessageDialog(null, "Not available, status: " + statuss);
 				} 
 			 else {
 			int quantity = Integer.parseInt(qtyField.getText());
 			table.addRow(new Object[] { itemName.getItem_id(), itemName.getItem_name(), itemName.getItem_store_price(),
-					itemName.getItem_unit(), quantity, itemName.getItem_store_price() * quantity });
+					itemName.getItem_unit(), quantity,  Math.round((itemName.getItem_store_price() * quantity) * 100.0) / 100.0});
 			qtyField.setText("1");
 				}
 				}
@@ -407,6 +407,7 @@ public JPanel_Selling(Map<String, Object> values) {
 		double convert = 0;
 		for (int i = tableRow -1 ; i>=0 ;i--) {
 			double price = (double) table.getValueAt(i, 5);
+			double roundedPrice = Math.round(price * 100.0) / 100.0;
 			convert += price;
 		}
 		priceField.setText(Double.toString(convert));
@@ -441,7 +442,20 @@ try {
 	int bill_id = dbBill.createBill(bill);
     SimpleDateFormat time = new SimpleDateFormat("ddMMyyyy-HHmmss");
     String fileName = time.format(new Date());
-    FileOutputStream streamTo = new FileOutputStream("src//billPrint//Bill-"+fileName+".txt", true);
+    String username = System.getProperty("user.name");
+    String osname = System.getProperty("os.name");
+    String folder = "";
+    if (osname.equalsIgnoreCase("linux")) {
+		File theDir = new File("/home/" + username +"/Documents/billPrinted");
+		if (!theDir.exists())theDir.mkdirs();
+		folder = String.valueOf(theDir);
+	}
+    else if(osname.equalsIgnoreCase("windows 10")) {
+    	File theDir = new File("C:/Users/" + username +"/billPrinted");
+    	if (!theDir.exists())theDir.mkdirs();            	
+    	folder = String.valueOf(theDir);
+    }
+	FileOutputStream streamTo = new FileOutputStream(folder+"/Bill-"+fileName+".txt", true);
     String save = "						Purchase Bill" + "\n\r";
     save += "ID Bill: " + bill_id + " - Date: " + time.format(new Date()) + "\n\r";
     save += "Payment: " + cbPayment.getSelectedItem().toString().trim() + "Customer: " + customer.getCustomer_id() + "\n\r";
@@ -483,16 +497,10 @@ try {
     streamTo.write(save.getBytes());
     streamTo.flush();
     streamTo.close();
-	JOptionPane.showConfirmDialog(null, "Đã thanh toán");
+	JOptionPane.showConfirmDialog(null, "Payment success");
 } catch (Exception e2) {
 	// TODO: handle exception
 	System.out.println(e2.getMessage());
 }
 	}
-//String payment = cbPayment.getSelectedItem().toString();
-//	int row[] = tableOrder.getSelectedRows();
-//int column = tableOrder.getColumnCount();
-//for(int i = row.length -1; i>=0 ;i--) {
-//tableOrder.getValueAt(row[i], i);
-//}
 }

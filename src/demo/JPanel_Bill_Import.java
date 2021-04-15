@@ -21,9 +21,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import org.jfree.ui.RefineryUtilities;
+
 import entities.Bill;
 import entities.BillDetail;
 import entities.Import;
+import entities.ImportDetail;
 import model.BillModel;
 import model.ItemModel;
 
@@ -46,6 +49,7 @@ public class JPanel_Bill_Import extends JPanel {
 	private JLabel lblItemReturnedsoFar;
 	private JLabel lblReturned;
 	private Map<String, Object> values = new HashMap<String, Object>();
+	private JButton btnMonthTrending;
 
 	/**
 	 * Create the panel.
@@ -72,6 +76,7 @@ public class JPanel_Bill_Import extends JPanel {
 		panel.add(jbuttonBillReturned);
 
 		jbuttonDeleteBill = new JButton("Delete Bill");
+		jbuttonDeleteBill.setVisible(false);
 //		jbuttonDeleteBill.addActionListener(new ActionListener() {
 //			public void actionPerformed(ActionEvent agr0) {
 //				jbuttonDeleteBill_actionPerformed(agr0);
@@ -118,9 +123,19 @@ public class JPanel_Bill_Import extends JPanel {
 		panel_3.add(lblTotal);
 		
 		lblItemReturnedsoFar = new JLabel("iTem returned(so far): ");
+		lblItemReturnedsoFar.setVisible(false);
 		panel_3.add(lblItemReturnedsoFar);
 		
 		lblReturned = new JLabel("");
+		lblReturned.setVisible(false);
+		
+		btnMonthTrending = new JButton("Month Trending");
+		btnMonthTrending.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnMonthTrending_actionPerformed(e);
+			}
+		});
+		panel_3.add(btnMonthTrending);
 		panel_3.add(lblReturned);
 
 		panel_1 = new JPanel();
@@ -171,6 +186,7 @@ public JPanel_Bill_Import(Map<String, Object> values ) {
 	this.values = values;
 	loadData();
 }
+
 	public void loadData() {
 
 		BillModel modelBill = new BillModel();
@@ -201,12 +217,14 @@ public JPanel_Bill_Import(Map<String, Object> values ) {
 //		JIFrame_SoldItem  soldAday = new JIFrame_SoldItem();
 		panel_2.setVisible(true);
 		findItemSoldinDAY(billModel.findItemSoldinDAY());
+		double total = billModel.sumImportMoneyinDAY();
+		lblTotal.setText(String.valueOf(total));
 	}
 	public void findItemSoldinDAY(List<BillDetail> bills) {
 		ItemModel modelItem = new ItemModel();
 		DefaultTableModel table = new DefaultTableModel();
 		table.addColumn("Item Name");
-		table.addColumn("Item Quantity sold");
+		table.addColumn("Item Quantity");
 		
 		for (BillDetail bill : bills) {
 			int id = bill.getItem_id();
@@ -215,18 +233,19 @@ public JPanel_Bill_Import(Map<String, Object> values ) {
 		}
 		table_1.setModel(table);
 	}
-	public void fillDETAILtoTable(List<BillDetail> bills) {
+	public void fillDETAILtoTable(List<ImportDetail> bills) {
 		DefaultTableModel table = new DefaultTableModel();
-		table.addColumn("Bill Detail ID");
-		table.addColumn("Item ID");
+		table.addColumn("Import Detail ID");
+		table.addColumn("Item Name");
+		table.addColumn("Import Price");
 		table.addColumn("Store Price");
 		table.addColumn("Item Unit");
 		table.addColumn("Item Quantity");
 		table.addColumn("Bill Status");
 		table.addColumn("Bill ID");
-		for (BillDetail bill : bills) {
-			table.addRow(new Object[] { bill.getBill_detail_id(), bill.getItem_id(), bill.getStore_price(),
-					bill.getItem_unit(), bill.getItem_quantity(), bill.getBill_status(), bill.getBill_id() });
+		for (ImportDetail bill : bills) {
+			table.addRow(new Object[] { bill.getImport_detail_id(), bill.getItem_name(),bill.getImport_price(), bill.getStore_price(),
+					bill.getItem_unit(), bill.getItem_quantity(), bill.getBill_status(), bill.getBill_import_id() });
 		}
 		tableImportBill.setModel(table);
 	}
@@ -236,44 +255,48 @@ public JPanel_Bill_Import(Map<String, Object> values ) {
 		int row = tableImportBill.getSelectedRow();
 		int bill_id = (int) tableImportBill.getValueAt(row, 0);
 		BillModel billModel = new BillModel();
-		fillDETAILtoTable(billModel.findAllBasedMainID(bill_id));
-		btnReturnThisItem.setVisible(true);
-		double total = billModel.sumMoneyinDAY();
-		int returnedCount = billModel.billReturninDAY();
-		lblTotal.setText(String.valueOf(total));lblReturned.setText(String.valueOf(returnedCount));
+		fillDETAILtoTable(billModel.findAllBasedMainImportID(bill_id));
+
+//		int returnedCount = billModel.billReturninDAY();
+//		lblReturned.setText(String.valueOf(returnedCount));
 	}
 
 	public void btnReturnThisItem_actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		int row = tableImportBill.getSelectedRow();
-		int bill = (Integer) tableImportBill.getValueAt(row, 6);
-		BillModel detail = new BillModel();
-		if (row >= 0) {
-			for (int i = row; i >= 0;) {
-				int bill_detail_id;
-				int item_id;
-				int item_quantity;
-				int bill_id;
-				String temp1, temp2, temp3, temp4;
-				temp1 = String.valueOf(tableImportBill.getValueAt(i, 0));
-				bill_detail_id = Integer.parseInt(temp1);
-				temp2 = String.valueOf(tableImportBill.getValueAt(i, 1));
-				item_id = Integer.parseInt(temp2);
-				temp3 = String.valueOf(tableImportBill.getValueAt(i, 4));
-				item_quantity = Integer.parseInt(temp3);
-				temp4 = String.valueOf(tableImportBill.getValueAt(i, 6));
-				bill_id = Integer.parseInt(temp4);
-//			System.out.println(bill_detail_id + " - " +item_id+ " - " + item_quantity+ " - " +bill_id);
-				detail.updateReturnedItemQuantity(item_quantity, item_id);
-				detail.updateStatusReturnedItem(bill_detail_id);
-				JOptionPane.showMessageDialog(null, "Item đã được hoàn và cộng vào kho");
-				fillDETAILtoTable(detail.findAllBasedMainID(bill));
-				break;
-			}
-		} else
-			JOptionPane.showMessageDialog(null, "Please select one of those item in the table in order to change it");
+//		// TODO Auto-generated method stub
+//		int row = tableImportBill.getSelectedRow();
+//		int bill = (Integer) tableImportBill.getValueAt(row, 6);
+//		BillModel detail = new BillModel();
+//		if (row >= 0) {
+//			for (int i = row; i >= 0;) {
+//				int bill_detail_id;
+//				int item_id;
+//				int item_quantity;
+//				int bill_id;
+//				String temp1, temp2, temp3, temp4;
+//				temp1 = String.valueOf(tableImportBill.getValueAt(i, 0));
+//				bill_detail_id = Integer.parseInt(temp1);
+//				temp2 = String.valueOf(tableImportBill.getValueAt(i, 1));
+//				item_id = Integer.parseInt(temp2);
+//				temp3 = String.valueOf(tableImportBill.getValueAt(i, 4));
+//				item_quantity = Integer.parseInt(temp3);
+//				temp4 = String.valueOf(tableImportBill.getValueAt(i, 6));
+//				bill_id = Integer.parseInt(temp4);
+////			System.out.println(bill_detail_id + " - " +item_id+ " - " + item_quantity+ " - " +bill_id);
+//				detail.updateReturnedItemQuantity(item_quantity, item_id);
+//				detail.updateStatusReturnedItem(bill_detail_id);
+//				JOptionPane.showMessageDialog(null, "Item đã được hoàn và cộng vào kho");
+//				fillDETAILtoTable(detail.findAllBasedMainID(bill));
+//				break;
+//			}
+//		} else
+//			JOptionPane.showMessageDialog(null, "Please select one of those item in the table in order to change it");
 	}
-
+	public void btnMonthTrending_actionPerformed(ActionEvent e) {
+		PieChartImport pie = new PieChartImport("Month Import trending");
+		pie.setSize(560, 367);
+		RefineryUtilities.centerFrameOnScreen(pie);
+		pie.setVisible(true);
+	}
 	private void clearJPanel() {
 		panel_1.removeAll();
 		panel_1.revalidate();

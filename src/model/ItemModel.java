@@ -232,6 +232,19 @@ public class ItemModel {
 			return null;
 		}
 	}
+	public boolean notSellStatus(int id) {
+
+		try {
+			PreparedStatement querry = ConnectDB.getConnection()
+					.prepareStatement("UPDATE `db_item` set `status` = 'Unavailable' WHERE `item_id` = ?");
+			querry.setInt(1, id);
+			return querry.executeUpdate() > 0;
+		} catch (Exception e) {
+			// TODO: handle exception
+					JOptionPane.showMessageDialog(null, "Cannot find item's ID.");
+			return false;
+		}
+	}
 	public String itemName(int id) {
 		String name = "";
 		try {
@@ -304,7 +317,7 @@ public class ItemModel {
 		try {
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			PreparedStatement querry = ConnectDB.getConnection().prepareStatement(
-					"INSERT INTO `db_item`(`item_id`, `item_name`, `item_store_price`, `item_import_price`, `store_quantity`, `item_unit`, `status`, `category_id`) VALUES (NULL, ?, ?, ?, ?, ?, 'FULL', ?)");
+					"INSERT INTO `db_item`(`item_id`, `item_name`, `item_store_price`, `item_import_price`, `store_quantity`, `item_unit`, `status`, `category_id`) VALUES (NULL, ?, ?, ?, ?, ?, 'Available', ?)");
 			querry.setString(1,item.getItem_name());
 			querry.setDouble(2,item.getItem_import_price());
 			querry.setDouble(3,item.getItem_store_price());
